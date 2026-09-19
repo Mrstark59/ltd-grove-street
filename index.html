@@ -2,882 +2,823 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LTD Grove Street</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Barlow+Condensed:wght@400;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#0a0908;--bg2:#0f0d0b;--bg3:#141210;--card:#100e0c;
+  --green:#4ade80;--lime:#86efac;--yellow:#fbbf24;--gold:#d97706;
+  --purple:#a78bfa;--red:#f87171;--white:#f0ebe0;--dim:#2d2618;--dim2:#7a6845;
+  --gg:2px 2px 0 rgba(0,0,0,.9),0 0 12px rgba(74,222,128,.25);
+  --gy:2px 2px 0 rgba(0,0,0,.9),0 0 12px rgba(251,191,36,.25);
+  --gp:2px 2px 0 rgba(0,0,0,.9),0 0 12px rgba(167,139,250,.2);
+  --gr:2px 2px 0 rgba(0,0,0,.9),0 0 12px rgba(248,113,113,.2);
+  --border-g:rgba(74,222,128,.15);--border-y:rgba(251,191,36,.15);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-/* ══ THÈME CLAIR (défaut) ══ */
-:root,[data-theme="light"]{
-  --red:#e02020;--red2:#c01818;--dark:#111;
-  --bg:#f4f4f2;--surface:#fff;--surface2:#fafafa;
-  --border:#e5e5e5;--text:#1a1a1a;--muted:#6b6b6b;
-  --green:#16a34a;--yellow:#d97706;
-  --shadow:rgba(0,0,0,.08);
-}
-/* ══ THÈME SOMBRE ══ */
-[data-theme="dark"]{
-  --red:#e02020;--red2:#c01818;--dark:#0a0a0a;
-  --bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;
-  --border:#2a2a2a;--text:#f0f0f0;--muted:#666;
-  --green:#22c55e;--yellow:#fbbf24;
-  --shadow:rgba(0,0,0,.4);
-}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;font-family:'Inter',sans-serif}
-img{max-width:100%;display:block}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Barlow Condensed',sans-serif;overflow-x:hidden;min-height:100vh}
 
-/* ══ TOPBAR ══ */
-.topbar{background:var(--red);color:#fff;font-size:12px;font-weight:600;letter-spacing:.5px;text-align:center;padding:7px 16px}
+/* ── NOISE TEXTURE ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E")}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%)}
 
-/* ══ HEADER ══ */
-header{background:var(--dark);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.header-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:20px;height:64px}
-.logo-wrap{flex-shrink:0;display:flex;align-items:center;gap:10px;cursor:pointer}
-.logo-img{width:48px;height:48px;border-radius:8px;object-fit:cover}
-.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;line-height:1;color:var(--red)}
-.logo-sub{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.header-search{flex:1;max-width:540px;position:relative}
-.header-search input{width:100%;padding:10px 16px 10px 42px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:var(--surface2);color:#f0f0f0}
-.header-search input:focus{border-color:var(--red);background:var(--surface2)}
-.header-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
-.header-search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:1000;display:none;max-height:320px;overflow-y:auto}
-.header-search-results.show{display:block}
-.hsr-item{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
-.hsr-item:hover{background:var(--surface2)}
-.hsr-icon{width:36px;height:36px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.hsr-name{font-size:13px;font-weight:600}.hsr-cat{font-size:11px;color:var(--muted)}
-.hsr-price{font-size:14px;font-weight:800;color:var(--red);margin-left:auto}
-.header-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
-.btn-login{padding:9px 18px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
-.btn-login:hover{background:var(--red2)}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--surface2);border-radius:6px;border:1px solid var(--border)}
-.user-av{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
-.user-name{font-size:13px;font-weight:700}
-.rank-pill{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.rp-admin{background:#fee2e2;color:#dc2626}.rp-entreprise{background:#fef3c7;color:#d97706}.rp-staff{background:#e0f2fe;color:#0284c7}.rp-client{background:#f0f0f0;color:#6b6b6b}.rp-vip{background:#f3e8ff;color:#7c3aed}
-.btn-logout{padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
-.btn-logout:hover{border-color:#dc2626;color:#dc2626}
-.cart-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--dark);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
-.cart-btn:hover{background:var(--surface2)}
-.cart-bubble{background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:#060504}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--green),var(--yellow));border-radius:0}
 
-/* ══ NAV CATEGORIES ══ */
-.cat-nav{background:var(--dark);border-bottom:1px solid var(--border)}
-.cat-nav-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;height:44px}
-.cat-nav-inner::-webkit-scrollbar{display:none}
-.cnav-scroll-wrap{position:relative}
-.cnav-scroll-track{height:2px;background:#f0f0f0;position:relative}
-.cnav-scroll-thumb{position:absolute;top:0;height:100%;background:var(--red);border-radius:0;min-width:40px;cursor:grab;transition:left .05s,width .05s}
-.cnav-scroll-thumb:active{cursor:grabbing}
-.ctab{padding:0 18px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:transparent;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;height:44px;transition:all .15s}
-.ctab:hover{color:#f0f0f0}
-.ctab.active{color:var(--red);border-bottom-color:var(--red)}
+/* ══════════ NAV ══════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:59px;display:flex;align-items:stretch;background:rgba(10,9,8,.97);border-bottom:1px solid rgba(74,222,128,.1);box-shadow:0 1px 0 rgba(0,0,0,.8),0 2px 20px rgba(0,0,0,.6)}
+nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,var(--green) 25%,var(--yellow) 50%,var(--purple) 75%,transparent 95%);opacity:.3}
+.nav-logo{display:flex;align-items:center;padding:0 20px;font-family:'Permanent Marker',cursive;font-size:16px;color:var(--green);text-shadow:var(--gg);border-right:1px solid rgba(74,222,128,.08);flex-shrink:0;cursor:pointer;letter-spacing:1px;gap:8px}
+.nav-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;flex-shrink:0}
+.nav-tab-rail{flex:1;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.nav-tabs{display:flex;flex:1;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+/* ── SCROLL INDICATOR HORIZONTAL ── */
+.nav-scroll-track{height:4px;background:rgba(74,222,128,.1);position:relative;flex-shrink:0;cursor:pointer}
+.nav-scroll-thumb{position:absolute;top:0;height:100%;background:linear-gradient(90deg,var(--green),var(--yellow));border-radius:0;transition:left .08s,width .08s;min-width:40px;cursor:grab;box-shadow:0 0 8px rgba(74,222,128,.4)}
+.nav-scroll-thumb:hover{filter:brightness(1.3);box-shadow:0 0 14px rgba(74,222,128,.6)}
+.nav-scroll-thumb:active{cursor:grabbing}
+.ntab{display:flex;align-items:center;gap:5px;padding:0 16px;color:var(--dim2);font-family:'Permanent Marker',cursive;font-size:11px;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;position:relative;flex-shrink:0;letter-spacing:.5px}
+.ntab:hover{color:rgba(240,235,224,.7);background:rgba(74,222,128,.02)}
+.ntab.active{color:var(--green);text-shadow:var(--gg);border-bottom-color:var(--green);background:rgba(74,222,128,.04)}
+.nav-right{display:flex;align-items:center;gap:8px;padding:0 14px;border-left:1px solid rgba(74,222,128,.07);flex-shrink:0}
+.nav-uname{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);text-shadow:1px 1px 0 #000}
+.rank-badge{padding:2px 6px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;border:1px solid}
+.rb-admin{border-color:var(--red);color:var(--red)}.rb-vip{border-color:var(--purple);color:var(--purple)}.rb-entreprise{border-color:var(--yellow);color:var(--yellow)}.rb-staff{border-color:var(--yellow);color:var(--yellow)}.rb-client{border-color:var(--dim2);color:var(--dim2)}
+.nav-logout{padding:4px 10px;background:transparent;border:1px solid rgba(255,255,255,.08);color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.nav-logout:hover{border-color:var(--red);color:var(--red)}
+.nav-login-btn{padding:6px 16px;background:var(--green);color:#000;font-family:'Permanent Marker',cursive;font-size:11px;cursor:pointer;border:none;letter-spacing:1px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:all .2s;box-shadow:2px 2px 0 rgba(0,0,0,.7);white-space:nowrap}
+.nav-login-btn:hover{background:var(--lime);transform:translateY(-1px);box-shadow:3px 3px 0 rgba(0,0,0,.7)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
-/* ══ PAGES ══ */
-.page{display:none}.page.active{display:block}
-.container{max-width:1400px;margin:0 auto;padding:28px 20px}
+/* ══════════ TICKER ══════════ */
+.ticker-wrap{position:fixed;top:60px;left:0;right:0;z-index:998;height:22px;overflow:hidden;background:rgba(8,7,6,.95);border-bottom:1px solid rgba(74,222,128,.07);display:flex;align-items:center}
+.ticker-label{flex-shrink:0;padding:0 10px;background:var(--green);color:#000;font-family:'Permanent Marker',cursive;font-size:8px;height:100%;display:flex;align-items:center;white-space:nowrap;letter-spacing:1px;gap:4px}
+.ticker-inner{overflow:hidden;flex:1}
+.ticker-track{display:flex;align-items:center;animation:tickerAnim 38s linear infinite;white-space:nowrap}
+.ticker-track:hover{animation-play-state:paused}
+.ti{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim2);padding:0 24px}
+.ti span{color:var(--green)}.ti.y span{color:var(--yellow)}.ti.p span{color:var(--purple)}
+@keyframes tickerAnim{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ══ HOME HERO ══ */
-.hero{background:linear-gradient(135deg,#111 0%,#1a0505 50%,#2a0808 100%);color:#fff;padding:60px 20px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Ccircle cx='30' cy='30' r='.5' fill='rgba(255,255,255,.05)'/%3E%3C/svg%3E");pointer-events:none}
-.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1}
-.hero-logo{width:100px;height:100px;border-radius:16px;object-fit:cover;margin:0 auto 20px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 3px rgba(255,255,255,.1)}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;color:rgba(255,255,255,.7)}
-.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(42px,7vw,88px);line-height:.9;margin-bottom:12px;text-transform:uppercase}
-.hero h1 span{color:var(--red)}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:32px;font-weight:500}
-.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
-.hstat{text-align:center}
-.hstat-n{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;line-height:1;color:#fff}
-.hstat-n.red{color:var(--red)}.hstat-n.grn{color:#22c55e}.hstat-n.ylw{color:#fbbf24}
-.hstat-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.4);margin-top:2px}
-.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.hero-btn-p{padding:13px 28px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
-.hero-btn-p:hover{background:var(--red2);transform:translateY(-1px)}
-.hero-btn-s{padding:13px 28px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
-.hero-btn-s:hover{background:rgba(255,255,255,.14)}
+/* ══════════ SEARCH BAR ══════════ */
+.search-bar{position:fixed;top:79px;left:50%;transform:translateX(-50%);z-index:997;display:none;width:100%;max-width:480px;padding:0 16px}
+.search-bar.active{display:block}
+.search-input-wrap{position:relative}
+.search-input{width:100%;background:rgba(10,9,8,.97);border:1px solid var(--border-g);color:var(--white);padding:9px 14px 9px 36px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;outline:none;box-shadow:0 8px 32px rgba(0,0,0,.8)}
+.search-input:focus{border-color:var(--green);box-shadow:0 0 0 1px rgba(74,222,128,.15),0 8px 32px rgba(0,0,0,.8)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;opacity:.5}
+.search-results{background:rgba(12,11,9,.98);border:1px solid var(--border-g);border-top:none;max-height:300px;overflow-y:auto;display:none}
+.search-results.show{display:block}
+.sr-item{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .15s;border-bottom:1px solid rgba(255,255,255,.03)}
+.sr-item:hover{background:rgba(74,222,128,.05)}
+.sr-icon{width:32px;height:32px;background:rgba(74,222,128,.06);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sr-name{font-size:14px;font-weight:700}.sr-price{font-family:'Permanent Marker',cursive;color:var(--yellow);font-size:14px;margin-left:auto}
+.sr-empty{padding:14px;text-align:center;color:var(--dim2);font-size:13px}
 
-/* ══ TICKER ══ */
-.promo-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--border)}
-.promo-banner{background:var(--surface);padding:14px 20px;display:flex;align-items:center;gap:14px;border-right:1px solid var(--border);transition:background .15s;min-height:70px}
-.promo-banner:last-child{border-right:none}
-.promo-banner:hover{background:var(--surface2)}
-.pb-icon{font-size:32px;flex-shrink:0;width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2)}
-.pb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px}
-.pb-title{font-size:15px;font-weight:800;line-height:1.2;margin-bottom:2px}
-.pb-sub{font-size:12px;color:var(--muted)}
-.pb-arrow{margin-left:auto;color:var(--muted);font-size:18px;flex-shrink:0}
-@media(max-width:768px){.promo-bar{grid-template-columns:1fr}.promo-banner{border-right:none;border-bottom:1px solid var(--border)}.promo-banner:last-child{border-bottom:none}}
+/* ══════════ PAGES ══════════ */
+.page{display:none;min-height:calc(100vh - 80px);padding-top:90px;position:relative;z-index:2}
+.page.active{display:block}
+#page-home.active{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;min-height:100vh;padding-top:80px}
+.std-page{padding:90px 44px 60px}
 
-/* ══ SECTION TITLES ══ */
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;display:flex;align-items:center;gap:10px}
-.section-title::before{content:'';width:4px;height:28px;background:var(--red);border-radius:2px;flex-shrink:0}
-.see-all{font-size:13px;font-weight:600;color:var(--red);cursor:pointer;white-space:nowrap}
-.see-all:hover{text-decoration:underline}
+/* ══════════ HOME ══════════ */
+.h-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(74,222,128,.035) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 10% 90%,rgba(167,139,250,.03) 0%,transparent 50%),radial-gradient(ellipse 30% 35% at 92% 80%,rgba(251,191,36,.03) 0%,transparent 50%)}
+.h-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(74,222,128,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(74,222,128,.018) 1px,transparent 1px);background-size:72px 72px}
+.h-scanlines{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);opacity:.5}
+.home-c{position:relative;z-index:2;padding:20px 16px}
+.logo-ltd{font-family:'Permanent Marker',cursive;font-size:clamp(28px,5.5vw,64px);display:block;line-height:.9;color:var(--white);text-shadow:3px 3px 0 #000,0 0 20px rgba(74,222,128,.1);letter-spacing:6px;opacity:.7}
+.logo-grove{font-family:'Permanent Marker',cursive;font-size:clamp(56px,12vw,148px);display:block;line-height:.85;color:var(--green);text-shadow:5px 5px 0 #000,-2px -2px 0 rgba(0,0,0,.5),0 0 20px rgba(74,222,128,.12);letter-spacing:-3px}
+.logo-street{font-family:'Permanent Marker',cursive;font-size:clamp(40px,8.5vw,112px);display:block;line-height:.88;color:var(--yellow);text-shadow:5px 5px 0 #000,-2px -2px 0 rgba(0,0,0,.5),0 0 14px rgba(251,191,36,.12);letter-spacing:3px}
+.logo-drip{height:6px;background:linear-gradient(90deg,transparent 5%,var(--green) 15%,var(--green) 17%,transparent 20%,transparent 30%,var(--yellow) 40%,var(--yellow) 43%,transparent 46%,transparent 56%,var(--lime) 64%,var(--lime) 67%,transparent 71%,transparent 80%,var(--green) 88%,var(--green) 91%,transparent 95%);border-radius:0 0 4px 4px;margin-top:5px;opacity:.6}
+.home-slogan{font-family:'Share Tech Mono',monospace;font-size:clamp(9px,1.8vw,12px);color:rgba(240,235,224,.35);letter-spacing:5px;text-transform:uppercase;margin:20px 0 28px}
+.home-slogan em{color:var(--yellow);font-style:normal}
+.home-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(74,222,128,.2);background:rgba(74,222,128,.04);padding:5px 14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:22px}
+.home-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0}
+.home-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.home-stats{display:flex;gap:44px;flex-wrap:wrap;justify-content:center}
+.hst-n{font-family:'Permanent Marker',cursive;font-size:42px;line-height:1;color:var(--green);text-shadow:var(--gg)}
+.hst-n.y{color:var(--yellow);text-shadow:var(--gy)}.hst-n.p{color:var(--purple);text-shadow:var(--gp)}
+.hst-l{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim2);margin-top:4px}
 
-/* ══ PRODUCT GRID ══ */
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border)}
-.pcard{background:var(--surface);display:flex;flex-direction:column;transition:box-shadow .2s;cursor:pointer;position:relative}
-.pcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:1;background:var(--surface2)}
-.pcard-img-wrap{aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.pcard-img{width:100%;height:100%;object-fit:cover}
-.pcard-icon{font-size:52px}
-.pcard-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.pb-red{background:#fee2e2;color:#dc2626}.pb-green{background:#dcfce7;color:#16a34a}.pb-yellow{background:#fef3c7;color:#d97706}.pb-purple{background:#f3e8ff;color:#7c3aed}
-.pcard-body{padding:12px;flex:1;display:flex;flex-direction:column}
-.pcard-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
-.pcard-name{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:4px}
-.pcard-desc{font-size:11px;color:var(--muted);flex:1;line-height:1.4;margin-bottom:10px}
-.pcard-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.pcard-price-wrap{display:flex;flex-direction:column}
-.pcard-old{font-size:11px;color:var(--muted);text-decoration:line-through}
-.pcard-price{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:var(--red);line-height:1}
-.pcard-price.custom{color:var(--green)}
-.pcard-add{width:34px;height:34px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;font-weight:300}
-.pcard-add:hover{background:var(--red2);transform:scale(1.05)}
+/* ══════════ BUTTONS ══════════ */
+.btn-g{padding:10px 24px;background:var(--green);color:#000;font-family:'Permanent Marker',cursive;font-size:12px;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;box-shadow:3px 3px 0 rgba(0,0,0,.8);clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);border:none}
+.btn-g:hover{background:var(--lime);transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(0,0,0,.8)}
+.btn-y{padding:10px 24px;background:transparent;border:2px solid var(--yellow);color:var(--yellow);font-family:'Permanent Marker',cursive;font-size:12px;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .18s;box-shadow:3px 3px 0 rgba(0,0,0,.6);clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.btn-y:hover{background:var(--yellow);color:#000;transform:translate(-1px,-1px)}
+.btn-p{padding:10px 24px;background:transparent;border:2px solid var(--purple);color:var(--purple);font-family:'Permanent Marker',cursive;font-size:12px;letter-spacing:1px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .18s;box-shadow:3px 3px 0 rgba(0,0,0,.6);clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+.btn-p:hover{background:var(--purple);color:#fff;transform:translate(-1px,-1px)}
+.btn-r{padding:8px 16px;background:transparent;border:1px solid var(--red);color:var(--red);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all .18s}
+.btn-r:hover{background:var(--red);color:#fff}
+.btn-sm{padding:5px 12px;background:transparent;border:1px solid rgba(74,222,128,.25);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.btn-sm:hover{background:var(--green);color:#000}
+.btn-sm.y{border-color:rgba(251,191,36,.25);color:var(--yellow)}.btn-sm.y:hover{background:var(--yellow);color:#000}
+.btn-sm.r{border-color:rgba(248,113,113,.25);color:var(--red)}.btn-sm.r:hover{background:var(--red);color:#fff}
+.btn-sm.p{border-color:rgba(167,139,250,.25);color:var(--purple)}.btn-sm.p:hover{background:var(--purple);color:#fff}
 
-/* ══ COMMANDER PAGE ══ */
-.cmd-locked-wrap{min-height:50vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:40px 20px}
-.cmd-locked-icon{font-size:56px;margin-bottom:4px}
-.cmd-locked-wrap h2{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;text-transform:uppercase}
-.cmd-locked-wrap p{color:var(--muted);font-size:15px;max-width:380px;line-height:1.7}
-.user-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
-.user-bar-name{font-size:16px;font-weight:800}
-.user-bar-cat{font-size:13px;color:var(--muted);margin-left:auto}
-.cmd-search{position:relative;margin-bottom:18px}
-.cmd-search input{width:100%;max-width:400px;padding:10px 14px 10px 40px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:var(--surface2);color:#f0f0f0}
-.cmd-search input:focus{border-color:var(--red)}
-.cmd-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
+/* ══════════ PAGE HEADERS ══════════ */
+.page-header{margin-bottom:36px}
+.s-eye{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.s-eye.y{color:var(--yellow)}.s-eye.p{color:var(--purple)}.s-eye.r{color:var(--red)}
+h2{font-family:'Permanent Marker',cursive;font-size:clamp(30px,5vw,58px);line-height:.95;margin-bottom:8px}
+.h2g{color:var(--green);text-shadow:3px 3px 0 #000}.h2y{color:var(--yellow);text-shadow:3px 3px 0 #000}.h2o{color:transparent;-webkit-text-stroke:2px rgba(240,235,224,.08)}
+.s-desc{color:rgba(240,235,224,.32);font-size:15px;max-width:440px;line-height:1.6;margin-bottom:36px;font-weight:400}
 
-/* ══ TEAM ══ */
-.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
-.tcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:center;padding:24px 16px;transition:box-shadow .2s}
-.tcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
-.tcard-av{width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;overflow:hidden}
-.tcard-av img{width:100%;height:100%;object-fit:cover}
-.tcard-name{font-size:15px;font-weight:800;margin-bottom:3px}
-.tcard-grade{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:4px}
-.tcard-sub{font-size:12px;color:var(--muted)}
+/* ══════════ COMMANDER ══════════ */
+#page-commander{padding:90px 44px 60px}
+.cmd-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center;gap:14px}
+.cmd-locked-icon{font-size:60px;margin-bottom:8px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.9))}
+.cmd-locked h3{font-family:'Permanent Marker',cursive;font-size:34px;margin-bottom:6px}
+.cmd-locked h3.green{color:var(--green);text-shadow:var(--gg)}.cmd-locked h3.purple{color:var(--purple);text-shadow:var(--gp)}
+.cmd-locked p{color:var(--dim2);font-size:15px;line-height:1.6;max-width:400px}
+.cmd-locked .badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.access-badge{padding:4px 14px;border:1px solid;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.access-badge.vip{border-color:var(--purple);color:var(--purple)}.access-badge.ent{border-color:var(--yellow);color:var(--yellow)}
+.cmd-active{display:none}.cmd-active.show{display:block}
+.cmd-user-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:rgba(74,222,128,.03);border:1px solid rgba(74,222,128,.08);padding:11px 16px;margin-bottom:24px}
+.cub-name{font-family:'Permanent Marker',cursive;font-size:16px;color:var(--green);text-shadow:var(--gg)}
+.cub-cat{font-size:12px;color:var(--dim2);margin-left:auto}.cub-cat strong{color:var(--yellow)}
 
-/* ══ PARTNERS ══ */
-.partners-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.prt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s}
-.prt-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
-.prt-logo{width:56px;height:56px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden}
-.prt-logo img{width:100%;height:100%;object-fit:cover}
-.prt-name{font-size:14px;font-weight:800;margin-bottom:3px}
-.prt-desc{font-size:12px;color:var(--muted);line-height:1.4}
+/* SEARCH IN COMMANDER */
+.cmd-search-bar{margin-bottom:20px;position:relative}
+.cmd-search-input{width:100%;max-width:360px;background:rgba(0,0,0,.5);border:1px solid rgba(74,222,128,.12);color:var(--white);padding:8px 12px 8px 34px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;outline:none;transition:border-color .2s}
+.cmd-search-input:focus{border-color:var(--green)}
+.cmd-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.4;pointer-events:none}
 
-/* ══ GALLERY ══ */
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:4px}
-.gal-item{position:relative;overflow:hidden;aspect-ratio:16/9;cursor:pointer;background:#f0f0f0}
-.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.gal-item:hover img{transform:scale(1.04)}
-.gal-item-title{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);color:#fff;padding:20px 12px 10px;font-size:13px;font-weight:700;opacity:0;transition:opacity .25s}
-.gal-item:hover .gal-item-title{opacity:1}
-.lightbox{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.cat-tabs{display:flex;gap:0;flex-wrap:wrap;border-bottom:1px solid rgba(74,222,128,.08);margin-bottom:30px}
+.ctab{padding:8px 18px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--dim2);font-family:'Permanent Marker',cursive;font-size:11px;letter-spacing:.5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.ctab.active,.ctab:hover{color:var(--green);border-bottom-color:var(--green);text-shadow:var(--gg)}
+
+/* PRODUCT GRID */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:2px}
+.pcard{background:var(--card);border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--yellow));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.pcard:hover{background:#181410;border-color:rgba(74,222,128,.14);transform:translateY(-2px);box-shadow:3px 4px 0 rgba(0,0,0,.7)}
+.pcard:hover::before{transform:scaleX(1)}
+.pcard-img{width:100%;height:120px;object-fit:cover;display:block;flex-shrink:0;background:rgba(0,0,0,.4)}
+.pcard-img-ph{width:100%;height:120px;background:linear-gradient(135deg,rgba(74,222,128,.04),rgba(0,0,0,.3));display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0}
+.pcard-body{padding:12px 13px 11px;flex:1;display:flex;flex-direction:column}
+.p-cat-lbl{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);margin-bottom:3px}
+.p-name{font-size:15px;font-weight:800;margin-bottom:3px;line-height:1.2}
+.p-desc{font-size:12px;color:var(--dim2);margin-bottom:10px;line-height:1.4;font-weight:400;flex:1}
+.p-foot{display:flex;align-items:flex-end;justify-content:space-between}
+.p-price-wrap{display:flex;flex-direction:column;gap:1px}
+.p-price-old{font-family:'Permanent Marker',cursive;font-size:12px;color:var(--dim2);text-decoration:line-through}
+.p-price{font-family:'Permanent Marker',cursive;font-size:20px;color:var(--yellow);text-shadow:1px 1px 0 #000}
+.p-price.custom{color:var(--green)}
+.p-add{width:30px;height:30px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.22);color:var(--green);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;flex-shrink:0}
+.p-add:hover{background:var(--green);color:#000;box-shadow:2px 2px 0 rgba(0,0,0,.6)}
+.p-badge{position:absolute;top:8px;right:8px;font-family:'Permanent Marker',cursive;font-size:8px;padding:3px 7px;z-index:1}
+.p-badge.g{background:var(--green);color:#000}.p-badge.y{background:var(--yellow);color:#000}.p-badge.p{background:var(--purple);color:#fff}
+
+/* CART FLOAT */
+.cart-float{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:10px 24px;display:flex;align-items:center;gap:12px;font-family:'Permanent Marker',cursive;font-size:12px;letter-spacing:1px;cursor:pointer;z-index:800;transition:all .3s;opacity:0;pointer-events:none;box-shadow:3px 3px 0 rgba(0,0,0,.8);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.cart-float.vis{opacity:1;pointer-events:all}
+.cart-float:hover{transform:translateX(-50%) translateY(-2px);background:var(--lime);box-shadow:5px 5px 0 rgba(0,0,0,.8)}
+.cbub{background:#000;color:var(--green);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Share Tech Mono',monospace}
+
+/* ══════════ TEAM ══════════ */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:2px}
+.tcard{background:var(--card);border:1px solid rgba(255,255,255,.04);overflow:hidden;transition:all .22s;position:relative;display:flex;flex-direction:column}
+.tcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--green),var(--yellow));transform:scaleX(0);transition:transform .28s}
+.tcard:hover{border-color:rgba(74,222,128,.12);transform:translateY(-2px);box-shadow:3px 3px 0 rgba(0,0,0,.5)}
+.tcard:hover::after{transform:scaleX(1)}
+.tcard-img{width:100%;height:112px;object-fit:cover;background:rgba(0,0,0,.4)}
+.tcard-img-ph{width:100%;height:112px;background:rgba(74,222,128,.04);display:flex;align-items:center;justify-content:center;font-family:'Permanent Marker',cursive;font-size:34px;color:var(--green);text-shadow:2px 2px 0 #000}
+.t-online{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.tcard-body{padding:13px;flex:1}
+.t-name{font-family:'Permanent Marker',cursive;font-size:15px;margin-bottom:3px;text-shadow:1px 1px 0 #000}
+.t-grade{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:3px}
+.t-sub{font-size:12px;color:var(--dim2);font-weight:400}
+
+/* ══════════ PARTNERS ══════════ */
+.part-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2px}
+.prt{background:var(--card);border:1px solid rgba(255,255,255,.04);display:flex;align-items:center;overflow:hidden;transition:all .22s;position:relative}
+.prt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--green),var(--yellow));transform:scaleY(0);transform-origin:top;transition:transform .28s}
+.prt:hover{border-color:rgba(74,222,128,.11)}.prt:hover::before{transform:scaleY(1)}
+.prt-logo{width:72px;height:72px;flex-shrink:0;object-fit:cover;background:rgba(74,222,128,.03)}
+.prt-logo-ph{width:72px;height:72px;flex-shrink:0;background:rgba(74,222,128,.04);display:flex;align-items:center;justify-content:center;font-size:24px}
+.prt-info{padding:12px 14px;flex:1}
+.prt-name{font-family:'Permanent Marker',cursive;font-size:14px;margin-bottom:4px}
+.prt-desc{font-size:12px;color:var(--dim2);line-height:1.4;font-weight:400}
+
+/* ══════════ GALLERY ══════════ */
+#page-galerie{padding:90px 44px 60px}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:2px}
+.gallery-item{position:relative;overflow:hidden;aspect-ratio:16/9;cursor:pointer;background:rgba(0,0,0,.4)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s,filter .4s;filter:brightness(.75) saturate(.85)}
+.gallery-item:hover img{transform:scale(1.06);filter:brightness(.92) saturate(1)}
+.gallery-item::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%);z-index:1;opacity:0;transition:opacity .28s}
+.gallery-item:hover::before{opacity:1}
+.gallery-item-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 13px;z-index:2;transform:translateY(100%);transition:transform .28s}
+.gallery-item:hover .gallery-item-overlay{transform:translateY(0)}
+.gallery-item-title{font-family:'Permanent Marker',cursive;font-size:13px;color:var(--white);text-shadow:2px 2px 0 #000}
+.gallery-empty{text-align:center;padding:60px 20px;color:var(--dim2);font-size:15px;grid-column:1/-1}
+.lightbox{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.97);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .lightbox.open{opacity:1;pointer-events:all}
-.lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:4px}
-.lb-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.lb-close:hover{background:rgba(255,255,255,.2)}
-.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;font-size:22px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.lb-nav:hover{background:rgba(255,255,255,.2)}
-.lb-prev{left:16px}.lb-next{right:16px}
+.lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;border:1px solid rgba(74,222,128,.1);box-shadow:4px 4px 0 rgba(0,0,0,.9)}
+.lb-close{position:absolute;top:20px;right:22px;background:none;border:none;color:var(--dim2);font-size:26px;cursor:pointer;transition:color .2s;line-height:1}
+.lb-close:hover{color:var(--red)}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.7);border:1px solid rgba(74,222,128,.15);color:var(--green);font-size:20px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.lb-prev{left:18px}.lb-next{right:18px}
+.lb-prev:hover,.lb-next:hover{background:var(--green);color:#000}
+.lb-caption{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-family:'Permanent Marker',cursive;font-size:13px;color:var(--white);text-shadow:2px 2px 0 #000;white-space:nowrap}
 
-/* ══ REVIEWS ══ */
-.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:28px}
-.rcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
-.r-stars{color:#f59e0b;font-size:14px;letter-spacing:2px;margin-bottom:8px}
-.r-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px;font-style:italic}
+/* ══════════ REVIEWS ══════════ */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px}
+.rcard{background:var(--card);border:1px solid rgba(255,255,255,.04);padding:20px;transition:all .2s;position:relative;overflow:hidden}
+.rcard::before{content:'';position:absolute;top:0;left:0;width:40px;height:2px;background:linear-gradient(90deg,var(--green),var(--yellow))}
+.rcard:hover{border-color:rgba(74,222,128,.08)}
+.r-stars{font-size:13px;letter-spacing:3px;color:var(--yellow);margin-bottom:9px}
+.r-text{font-size:13px;color:rgba(240,235,224,.45);line-height:1.7;margin-bottom:13px;font-style:italic;font-weight:400}
 .r-auth{display:flex;align-items:center;gap:9px}
-.r-av{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.r-name{font-size:13px;font-weight:700}.r-date{font-size:10px;color:var(--muted)}
-.rev-form{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;max-width:600px}
-.rev-form-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:16px}
-.star-row{display:flex;gap:6px;margin-bottom:12px}
-.sstar{background:none;border:none;font-size:24px;cursor:pointer;color:#d1d5db;transition:color .1s;padding:0;line-height:1}
-.sstar.on{color:#f59e0b}
+.r-av{width:30px;height:30px;border-radius:50%;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.14);display:flex;align-items:center;justify-content:center;font-family:'Permanent Marker',cursive;font-size:12px;color:var(--green);overflow:hidden}
+.r-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.r-name{font-size:13px;font-weight:700}.r-date{font-size:9px;color:var(--dim2);font-family:'Share Tech Mono',monospace}
+.rev-form{background:var(--bg3);border:1px solid rgba(74,222,128,.07);padding:26px;margin-top:26px;position:relative}
+.rev-form::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--yellow),var(--purple))}
+.rev-form-title{font-family:'Permanent Marker',cursive;font-size:18px;color:var(--green);margin-bottom:14px;text-shadow:var(--gg)}
+.star-row{display:flex;gap:7px;margin-bottom:11px}
+.sstar{font-size:22px;cursor:pointer;opacity:.18;transition:all .16s;background:none;border:none;color:var(--dim2)}
+.sstar.on{opacity:1;transform:scale(1.2);color:var(--yellow)}
 
-/* ══ FORMS ══ */
-.fg{margin-bottom:12px}
-.fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:5px;display:block}
-.fi,.ft,select.fi{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-family:'Inter',sans-serif;font-size:13px;outline:none;border-radius:6px;transition:border-color .2s;font-weight:500}
-.fi:focus,.ft:focus,select.fi:focus{border-color:var(--red);background:var(--surface2)}
-.ft{resize:vertical;min-height:80px}
-select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
-.form-row{display:grid;gap:12px}.form-2{grid-template-columns:1fr 1fr}.form-3{grid-template-columns:1fr 1fr 1fr}
-.img-preview{width:100%;max-height:80px;object-fit:cover;border-radius:6px;margin-top:6px;display:none;border:1px solid var(--border)}
-.img-preview.show{display:block}
-.btn-primary{padding:10px 22px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary:hover{background:var(--red2)}
-.btn-secondary{padding:10px 22px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-secondary:hover{background:var(--surface2)}
-.btn-danger{padding:8px 14px;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-danger:hover{background:#dc2626;color:#fff}
-.btn-sm{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-sm:hover{background:var(--surface2)}
-.btn-sm.red{background:#fee2e2;border-color:#fecaca;color:#dc2626}.btn-sm.red:hover{background:#dc2626;color:#fff}
-.btn-sm.green{background:#dcfce7;border-color:#bbf7d0;color:#16a34a}.btn-sm.green:hover{background:#16a34a;color:#fff}
-
-/* ══ ADMIN ══ */
-.admin-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--dark);margin-bottom:24px;overflow-x:auto;scrollbar-width:none;gap:0}
-.admin-tabs::-webkit-scrollbar{display:none}
-.atab{padding:12px 18px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:5px}
-.atab:hover{color:#f0f0f0}.atab.active{color:var(--red);border-bottom-color:var(--red)}
-.a-section{display:none}.a-section.active{display:block}
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
-.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase}
-.edit-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;display:none}
-.edit-box.open{display:block}
-.edit-box-title{font-size:15px;font-weight:800;margin-bottom:14px}
-.admin-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.al-row{background:var(--surface);padding:12px 14px;display:flex;align-items:center;gap:12px;transition:background .15s;flex-wrap:wrap}
-.al-row:hover{background:var(--surface2)}
-.al-thumb{width:44px;height:44px;border-radius:6px;object-fit:cover;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--border)}
-.al-info{flex:1;min-width:0}
-.al-name{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.al-meta{font-size:11px;color:var(--muted)}
-.al-actions{display:flex;gap:6px;flex-shrink:0}
-.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
-.settings-card-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
-.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1}
-.stat-n.red{color:var(--red)}.stat-n.grn{color:var(--green)}.stat-n.ylw{color:var(--yellow)}
-.stat-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:3px}
-
-/* ══ CATALOGUE ADMIN ══ */
-.ptog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.ptog{background:var(--surface);padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
-.ptog:hover{background:var(--surface2)}.ptog.on{background:rgba(217,119,6,.08)}
-.ptog-thumb{width:36px;height:36px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ptog-name{font-size:12px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ptog-base{font-size:10px;color:var(--muted);margin-top:1px}
-.ptog-cp{width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:11px;font-weight:700;color:var(--red);outline:none}
-.ptog-cp:focus{border-color:var(--red)}
-.tog{width:34px;height:18px;border-radius:9px;background:#333;position:relative;flex-shrink:0;transition:background .15s;pointer-events:none}
-.tog::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
-.ptog.on .tog{background:var(--red)}.ptog.on .tog::after{transform:translateX(16px)}
-
-/* ══ MODALS ══ */
-.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .22s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--surface);border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;transform:translateY(8px);transition:transform .22px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.15)}
-.overlay.open .modal{transform:translateY(0)}
-.modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;color:var(--muted);font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.modal-close:hover{background:var(--surface2);color:var(--text)}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
-.login-err{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#dc2626;padding:9px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none;font-weight:600}
+/* ══════════ MODALS ══════════ */
+.ov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.94);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;padding:16px}
+.ov.open{opacity:1;pointer-events:all}
+.mo{background:var(--bg3);border:1px solid rgba(74,222,128,.12);max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:30px;transform:translateY(10px);transition:transform .25s;position:relative;box-shadow:4px 4px 0 rgba(0,0,0,.8)}
+.mo::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--yellow),var(--purple),var(--green))}
+.ov.open .mo{transform:translateY(0)}
+.mo-title{font-family:'Permanent Marker',cursive;font-size:22px;color:var(--green);text-shadow:var(--gg);margin-bottom:4px}
+.mo-sub{font-size:12px;color:var(--dim2);margin-bottom:18px;font-weight:400}
+.ci{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:8px}
+.ci-name{font-size:14px;font-weight:700}.ci-qty{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px}
+.qb{width:20px;height:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--white);font-size:13px;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.qb:hover{background:var(--green);color:#000;border-color:var(--green)}
+.ci-price{font-family:'Permanent Marker',cursive;font-size:15px;color:var(--yellow);min-width:56px;text-align:right}
+.t-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid rgba(74,222,128,.08);margin:4px 0 16px}
+.t-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim2)}
+.t-val{font-family:'Permanent Marker',cursive;font-size:28px;color:var(--yellow);text-shadow:var(--gy)}
+.mfoot{display:flex;gap:9px;margin-top:12px}
+.b-cancel{flex:1;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.07);color:var(--dim2);font-family:'Permanent Marker',cursive;font-size:10px;cursor:pointer;transition:all .18s}
+.b-cancel:hover{border-color:var(--red);color:var(--red)}
+.b-ok{flex:2;padding:10px;background:var(--green);color:#000;font-family:'Permanent Marker',cursive;font-size:11px;cursor:pointer;transition:all .18s;border:none;box-shadow:2px 2px 0 rgba(0,0,0,.6)}
+.b-ok:hover{background:var(--lime);transform:translate(-1px,-1px)}
+.b-ok:disabled{opacity:.35;cursor:not-allowed}
+.order-suc{text-align:center;padding:30px 0;display:none}.order-suc.show{display:block}
+.order-suc-ico{font-size:48px;margin-bottom:10px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.8))}
+.order-suc h3{font-family:'Permanent Marker',cursive;font-size:22px;color:var(--green);margin-bottom:9px;text-shadow:var(--gg)}
+.order-suc p{color:var(--dim2);font-size:13px;line-height:1.7;font-weight:400}
+.login-mo{max-width:360px}
+.login-logo{font-family:'Permanent Marker',cursive;font-size:22px;text-align:center;margin-bottom:3px;color:var(--green);text-shadow:var(--gg)}
+.login-sub{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);text-align:center;margin-bottom:22px}
+.login-err{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:8px 12px;font-size:13px;margin-bottom:12px;display:none;font-weight:500}
 .login-err.show{display:block}
-.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
-.ci-info{flex:1}
-.ci-name{font-size:14px;font-weight:700}.ci-unit{font-size:11px;color:var(--muted)}
-.ci-qty{display:flex;align-items:center;gap:6px}
-.qbtn{width:26px;height:26px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:all .15s}
-.qbtn:hover{background:var(--red);border-color:var(--red);color:#fff}
-.ci-total{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--red);min-width:56px;text-align:right}
-.total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:2px solid var(--border);margin-top:4px}
-.total-label{font-size:13px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.5px}
-.total-val{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;color:var(--red)}
-.modal-foot{display:flex;gap:9px;margin-top:14px}
-.order-success{text-align:center;padding:24px 0;display:none}
-.order-success.show{display:block}
-.order-success-icon{font-size:52px;margin-bottom:10px}
-.order-success h3{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;margin-bottom:8px}
-.order-success p{color:var(--muted);font-size:13px;line-height:1.7}
+.mo-close{position:absolute;top:13px;right:15px;background:none;border:none;color:var(--dim2);font-size:19px;cursor:pointer;transition:color .18s;line-height:1}
+.mo-close:hover{color:var(--red)}
 
-/* ══ NOTIFICATIONS ══ */
-.notif{position:fixed;bottom:24px;right:20px;z-index:9000;background:var(--dark);color:#fff;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .28s;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:280px}
-.notif.err{background:#dc2626}
-.notif.vis{transform:translateY(0);opacity:1}
+/* ══════════ FORMS ══════════ */
+.fg{margin-bottom:11px}
+.fl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);margin-bottom:5px;display:block}
+.fi,.ft,select.fi{width:100%;background:rgba(0,0,0,.55);border:1px solid rgba(74,222,128,.09);color:var(--white);padding:8px 11px;font-family:'Barlow Condensed',sans-serif;font-size:14px;outline:none;transition:border-color .18s;font-weight:500}
+.fi:focus,.ft:focus,select.fi:focus{border-color:var(--green);box-shadow:inset 0 0 0 1px rgba(74,222,128,.06)}
+.ft{resize:vertical;min-height:58px}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a6845' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px;cursor:pointer}
+select.fi option{background:var(--bg3);color:var(--white)}
+.form-row{display:grid;gap:11px}.form-2{grid-template-columns:1fr 1fr}.form-3{grid-template-columns:1fr 1fr 1fr}
+.img-preview{width:100%;height:80px;object-fit:cover;margin-top:6px;border:1px solid rgba(74,222,128,.09);display:none}
+.img-preview.show{display:block}
 
-/* ══ FOOTER ══ */
-footer{background:var(--dark);color:rgba(255,255,255,.4);padding:20px;text-align:center;font-size:12px;font-weight:500;margin-top:40px}
-footer span{color:var(--red)}
+/* ══════════ ADMIN ══════════ */
+#page-admin{padding:90px 44px 60px}
+.admin-head{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.admin-title{font-family:'Permanent Marker',cursive;font-size:38px;color:var(--red);text-shadow:var(--gr)}
+.admin-nav{display:flex;gap:0;border-bottom:1px solid rgba(248,113,113,.1);margin-bottom:26px;flex-wrap:wrap;overflow-x:auto;scrollbar-width:none}
+.admin-nav::-webkit-scrollbar{display:none}
+.atab{padding:8px 16px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--dim2);font-family:'Permanent Marker',cursive;font-size:10px;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0}
+.atab:hover{color:var(--red)}.atab.active{color:var(--red);border-bottom-color:var(--red);background:rgba(248,113,113,.03)}
+.a-section{display:none}.a-section.active{display:block}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:9px}
+.sec-title{font-family:'Permanent Marker',cursive;font-size:19px;color:var(--green);text-shadow:var(--gg)}
+.admin-list{display:flex;flex-direction:column;gap:2px;margin-bottom:20px}
+.al-row{background:var(--card);border:1px solid rgba(255,255,255,.04);padding:12px 14px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;transition:border-color .18s}
+.al-row:hover{border-color:rgba(74,222,128,.08)}
+.al-img{width:44px;height:44px;object-fit:cover;background:rgba(74,222,128,.03);flex-shrink:0;border:1px solid rgba(74,222,128,.08)}
+.al-img-ph{width:44px;height:44px;flex-shrink:0;background:rgba(74,222,128,.04);border:1px solid rgba(74,222,128,.08);display:flex;align-items:center;justify-content:center;font-size:18px}
+.al-info{flex:1;min-width:100px}
+.al-name{font-family:'Permanent Marker',cursive;font-size:13px;margin-bottom:2px}
+.al-meta{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim2);letter-spacing:1px}
+.al-actions{display:flex;gap:5px;margin-left:auto}
+.edit-box{background:var(--bg3);border:1px solid rgba(74,222,128,.08);padding:20px;position:relative;margin-bottom:16px;display:none;box-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.edit-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--yellow))}
+.edit-box.open{display:block}
+.edit-title{font-family:'Permanent Marker',cursive;font-size:16px;color:var(--green);margin-bottom:14px;text-shadow:var(--gg)}
+.edit-actions{display:flex;gap:9px;margin-top:12px}
+.ce-wrap{background:var(--bg3);border:1px solid rgba(74,222,128,.06);padding:20px}
+.ce-cat-tabs{display:flex;gap:0;flex-wrap:wrap;border-bottom:1px solid rgba(74,222,128,.06);margin-bottom:16px}
+.cetab{padding:6px 12px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0}
+.cetab.active{color:var(--green);border-bottom-color:var(--green)}
+.ptog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px}
+.ptog{background:var(--card);border:1px solid rgba(255,255,255,.04);padding:10px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .18s}
+.ptog:hover{border-color:rgba(74,222,128,.09)}.ptog.on{border-color:rgba(74,222,128,.18);background:rgba(74,222,128,.03)}
+.ptog-img{width:32px;height:32px;object-fit:cover;flex-shrink:0}
+.ptog-img-ph{width:32px;height:32px;flex-shrink:0;background:rgba(74,222,128,.04);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ptog-info{flex:1;min-width:0}.ptog-name{font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.ptog-prices{display:flex;align-items:center;gap:5px}
+.ptog-base{font-size:8px;color:var(--dim2);font-family:'Share Tech Mono',monospace}
+.ptog-custom{width:58px;padding:2px 5px;background:rgba(0,0,0,.6);border:1px solid rgba(74,222,128,.16);color:var(--yellow);font-family:'Share Tech Mono',monospace;font-size:8px;outline:none}
+.ptog-custom:focus{border-color:var(--green)}
+.tog-sw{width:30px;height:16px;border-radius:0;background:var(--dim);position:relative;flex-shrink:0;transition:background .18s;pointer-events:none}
+.tog-sw::after{content:'';position:absolute;top:3px;left:3px;width:10px;height:10px;background:var(--white);transition:transform .18s}
+.ptog.on .tog-sw{background:var(--green)}.ptog.on .tog-sw::after{transform:translateX(14px)}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.settings-card{background:var(--bg3);border:1px solid rgba(74,222,128,.06);padding:20px;position:relative}
+.settings-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--yellow))}
+.settings-card-title{font-family:'Permanent Marker',cursive;font-size:16px;color:var(--green);margin-bottom:13px;text-shadow:var(--gg)}
+.gal-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:2px;margin-bottom:16px}
+.gal-admin-item{position:relative;background:var(--card);border:1px solid rgba(255,255,255,.04);overflow:hidden}
+.gal-admin-item img{width:100%;height:115px;object-fit:cover;display:block}
+.gal-admin-item-info{padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:7px}
+.gal-admin-item-title{font-size:11px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ══ EMPTY STATE ══ */
-.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
-.empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
+/* ══════════ SETTINGS PAGE ══════════ */
+#page-settings{padding:90px 44px 60px}
+.param-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:2px;margin-bottom:32px}
 
-/* ══ RESPONSIVE ══ */
+/* ══════════ NOTIFICATIONS ══════════ */
+.notif{position:fixed;top:70px;right:14px;z-index:9000;background:var(--bg3);border:1px solid var(--green);color:var(--green);text-shadow:1px 1px 0 #000;padding:9px 15px;font-family:'Permanent Marker',cursive;font-size:11px;letter-spacing:1px;transform:translateX(140%);transition:transform .28s;box-shadow:3px 3px 0 rgba(0,0,0,.7);max-width:220px;pointer-events:none}
+.notif.err{border-color:var(--red);color:var(--red)}.notif.vis{transform:translateX(0)}
+
+/* ══════════ FOOTER ══════════ */
+footer{background:#070605;border-top:1px solid rgba(74,222,128,.07);padding:18px 44px;position:relative;z-index:2}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),var(--yellow),var(--purple),var(--green),transparent);opacity:.3}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.foot-copy{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim)}
+.foot-srv{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green)}
+
+/* ══════════ ANIMATIONS ══════════ */
+.fi2{opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s}.fi2.vis{opacity:1;transform:none}
+.empty{text-align:center;padding:42px 20px;color:var(--dim2);font-size:15px;font-style:italic}
+
+/* ══════════ RESPONSIVE ══════════ */
 @media(max-width:768px){
-  .header-inner{flex-wrap:wrap;height:auto;padding:10px 14px;gap:10px}
-  .header-search{order:3;width:100%;max-width:100%}
+  nav{height:auto;flex-wrap:wrap}
+  .nav-logo{padding:10px 14px;border-right:none;border-bottom:1px solid rgba(74,222,128,.06);width:100%;justify-content:center}
+  .nav-tab-rail{order:3;width:100%}
+  .nav-tabs{border-top:1px solid rgba(74,222,128,.04)}
+  .nav-right{padding:7px 14px;border-left:none;border-top:1px solid rgba(74,222,128,.04);width:100%;justify-content:center}
+  .ticker-wrap{top:107px}
+  .page,.std-page,#page-commander,#page-admin,#page-galerie,#page-settings{padding-top:146px}
   .form-2,.form-3{grid-template-columns:1fr}
+  .std-page,.page,#page-commander,#page-admin,#page-galerie,#page-settings{padding-left:16px;padding-right:16px}
+  footer{padding:16px}
   .settings-grid{grid-template-columns:1fr}
-  .container{padding:20px 14px}
-  .hero{padding:40px 16px}
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">🟢 LTD Grove Street — Ouvert 24h/24 — Livraison express sur Los Santos</div>
-
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <div class="logo-wrap" onclick="goPage('home')">
-      <img class="logo-img" src="https://raw.githubusercontent.com/Mrstark59/ltd-grove-street/main/logo%20ltd.png" alt="LTD">
-      <div>
-        <div class="logo-text">LTD Grove Street</div>
-        <div class="logo-sub">Los Santos · Davis</div>
-      </div>
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo" onclick="goPage('home')">
+    <div class="nav-logo-dot"></div>LTD Grove St.
+  </div>
+  <div class="nav-tab-rail">
+    <div class="nav-tabs" id="nav-tabs" onscroll="updateNavScroll()">
+      <button class="ntab active" data-page="home"      onclick="goPage('home')">🏠 Accueil</button>
+      <button class="ntab"        data-page="commander" onclick="goPage('commander')">🛒 Commander</button>
+      <button class="ntab"        data-page="team"      onclick="goPage('team')">👥 Équipe</button>
+      <button class="ntab"        data-page="partners"  onclick="goPage('partners')">🤝 Partenaires</button>
+      <button class="ntab"        data-page="galerie"   onclick="goPage('galerie')">📸 Galerie</button>
+      <button class="ntab"        data-page="reviews"   onclick="goPage('reviews')">⭐ Avis</button>
+      <button class="ntab" id="ntab-admin"    data-page="admin"    onclick="goPage('admin')"    style="display:none">⚙️ Admin</button>
+      <button class="ntab" id="ntab-settings" data-page="settings" onclick="goPage('settings')" style="display:none">🔧 Paramètres</button>
     </div>
-    <div class="header-search">
-      <span class="header-search-icon">🔍</span>
-      <input type="text" id="global-search" placeholder="Rechercher un produit..." oninput="globalSearch(this.value)" onfocus="showSearchRes()" onblur="setTimeout(()=>hideSearchRes(),200)">
-      <div class="header-search-results" id="search-results"></div>
-    </div>
-    <div class="header-actions" id="header-actions">
-      <button class="btn-login" onclick="openLogin()">Se connecter</button>
+    <div class="nav-scroll-track" id="nav-scroll-track">
+      <div class="nav-scroll-thumb" id="nav-scroll-thumb"></div>
     </div>
   </div>
-</header>
-
-<!-- CATEGORY NAV -->
-<div class="cnav-scroll-wrap">
-  <div class="cat-nav">
-    <div class="cat-nav-inner" id="cat-nav-inner" onscroll="updateCNavScroll()">
-      <button class="ctab active" data-page="home"      onclick="goPage('home')">🏠 Accueil</button>
-      <button class="ctab"        data-page="commander" onclick="goPage('commander')">🛒 Commander</button>
-      <button class="ctab"        data-page="team"      onclick="goPage('team')">👥 Équipe</button>
-      <button class="ctab"        data-page="partners"  onclick="goPage('partners')">🤝 Partenaires</button>
-      <button class="ctab"        data-page="galerie"   onclick="goPage('galerie')">📸 Galerie</button>
-      <button class="ctab"        data-page="reviews"   onclick="goPage('reviews')">⭐ Avis</button>
-      <button class="ctab" id="ctab-admin"    data-page="admin"    onclick="goPage('admin')"    style="display:none">⚙️ Admin</button>
-      <button class="ctab" id="ctab-settings" data-page="settings" onclick="goPage('settings')" style="display:none">🔧 Paramètres</button>
-    </div>
+  <div class="nav-right" id="nav-right">
+    <button class="nav-login-btn" onclick="openLogin()">Se connecter</button>
   </div>
-  <div class="cnav-scroll-track"><div class="cnav-scroll-thumb" id="cnav-thumb"></div></div>
+</nav>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker-label">🟢 LIVE</div>
+  <div class="ticker-inner"><div class="ticker-track" id="ticker-track"></div></div>
 </div>
 
-<!-- ══ PAGE ACCUEIL ══ -->
-<div class="page active" id="page-home">
-  <div class="hero">
-    <div class="hero-inner">
-      <img class="hero-logo" src="https://raw.githubusercontent.com/Mrstark59/ltd-grove-street/main/logo%20ltd.png" alt="LTD">
-      <div class="hero-badge">🟢 Toujours ouvert</div>
-      <h1>LTD <span>Grove</span><br>Street</h1>
-      <p class="hero-sub">Votre épicerie de confiance à Davis, Los Santos</p>
-      <div class="hero-stats">
-        <div class="hstat"><div class="hstat-n red" id="hcnt">0</div><div class="hstat-l">Commandes</div></div>
-        <div class="hstat"><div class="hstat-n grn" id="hprods">0</div><div class="hstat-l">Produits</div></div>
-        <div class="hstat"><div class="hstat-n ylw" id="hreviews">0</div><div class="hstat-l">Avis clients</div></div>
-      </div>
-      <div class="hero-btns">
-        <button class="hero-btn-p" onclick="goPage('commander')">🛒 Commander</button>
-        <button class="hero-btn-s" onclick="goPage('team')">👥 Notre équipe</button>
-        <button class="hero-btn-s" onclick="goPage('galerie')">📸 Galerie</button>
-      </div>
+<!-- ══════════ PAGE ACCUEIL ══════════ -->
+<div class="page" id="page-home">
+  <div class="h-bg"></div><div class="h-grid"></div><div class="h-scanlines"></div>
+  <div class="home-c">
+    <div class="home-badge">🟢 LTD Grove Street — Toujours ouvert</div>
+    <span class="logo-ltd">LTD</span>
+    <span class="logo-grove">Grove</span>
+    <span class="logo-street">Street</span>
+    <div class="logo-drip"></div>
+    <div class="home-slogan">— Toujours ouvert, <em>toujours carré</em> —</div>
+    <div class="home-btns">
+      <button class="btn-g" onclick="goPage('commander')">🛒 Commander</button>
+      <button class="btn-y" onclick="goPage('team')">👥 Équipe</button>
+      <button class="btn-p" onclick="goPage('galerie')">📸 Galerie</button>
     </div>
-  </div>
-  <div class="promo-bar" id="promo-bar">
-    <div class="promo-banner" id="pb-0" onclick="goPage('commander')" style="cursor:pointer"></div>
-    <div class="promo-banner" id="pb-1" onclick="goPage('commander')" style="cursor:pointer"></div>
-    <div class="promo-banner" id="pb-2" onclick="goPage('commander')" style="cursor:pointer"></div>
-  </div>
-  <div class="container">
-    <div class="section-head">
-      <div class="section-title">Nos Produits</div>
-      <span class="see-all" onclick="goPage('commander')">Voir tout le catalogue →</span>
+    <div class="home-stats fi2 vis">
+      <div><div class="hst-n" id="hcnt">0</div><div class="hst-l">Commandes</div></div>
+      <div><div class="hst-n y" id="hprods">0</div><div class="hst-l">Produits</div></div>
+      <div><div class="hst-n p" id="hreviews">0</div><div class="hst-l">Avis clients</div></div>
     </div>
-    <div class="prod-grid" id="home-prod-grid"></div>
   </div>
 </div>
 
-<!-- ══ PAGE COMMANDER ══ -->
+<!-- ══════════ PAGE COMMANDER ══════════ -->
 <div class="page" id="page-commander">
-  <div class="container">
-    <div id="cmd-locked-wrap" class="cmd-locked-wrap" style="display:none">
-      <div class="cmd-locked-icon" id="cmd-locked-icon">🔒</div>
-      <h2 id="cmd-locked-title">Accès Restreint</h2>
-      <p id="cmd-locked-msg">Cet espace est réservé aux membres Entreprise.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center" id="cmd-locked-btns">
-        <button class="btn-primary" onclick="openLogin()">Se connecter</button>
-      </div>
-    </div>
-    <div id="cmd-active" style="display:none">
-      <div class="user-bar">
-        <div class="user-av" id="ub-av">A</div>
-        <div><div class="user-bar-name" id="ub-name">–</div><div id="ub-rank"></div></div>
-        <div class="user-bar-cat" id="ub-cat"></div>
-      </div>
-      <div class="cmd-search">
-        <span class="cmd-search-icon">🔍</span>
-        <input type="text" id="cmd-search" placeholder="Rechercher..." oninput="filterCmdProds()">
-      </div>
-      <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none" id="cmd-cat-tabs"></div>
-      <div class="prod-grid" id="cmd-prod-grid"></div>
+  <div class="cmd-locked" id="cmd-locked" style="display:none">
+    <div class="cmd-locked-icon" id="cmd-locked-icon">🔒</div>
+    <h3 id="cmd-locked-title" class="purple">Accès Restreint</h3>
+    <p id="cmd-locked-msg">Cet espace est réservé aux membres <strong>Entreprise</strong>.<br>Connectez-vous avec un compte autorisé.</p>
+    <div class="badge-row"><div class="access-badge ent">⭐ Entreprise</div></div>
+    <div id="cmd-locked-actions" style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn-g" onclick="openLogin()">Se connecter</button>
     </div>
   </div>
-</div>
-
-<!-- ══ PAGE ÉQUIPE ══ -->
-<div class="page" id="page-team">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Notre Équipe</div></div>
-    <div class="team-grid" id="team-grid"></div>
+  <div class="cmd-active" id="cmd-active">
+    <div class="cmd-user-bar">
+      <span class="cub-name" id="cub-name">–</span>
+      <span id="cub-rank"></span>
+      <span class="cub-cat" id="cub-cat"></span>
+    </div>
+    <div class="cmd-search-bar">
+      <span class="cmd-search-icon">🔍</span>
+      <input class="cmd-search-input" id="cmd-search" type="text" placeholder="Rechercher un produit..." oninput="filterCmdProds()">
+    </div>
+    <div class="cat-tabs" id="cmd-cat-tabs"></div>
+    <div class="prod-grid" id="cmd-prod-grid"></div>
   </div>
 </div>
 
-<!-- ══ PAGE PARTENAIRES ══ -->
-<div class="page" id="page-partners">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Partenaires Officiels</div></div>
-    <div class="partners-grid" id="part-grid"></div>
+<!-- ══════════ PAGE ÉQUIPE ══════════ -->
+<div class="page std-page" id="page-team">
+  <div class="page-header">
+    <div class="s-eye p">// Staff</div>
+    <h2><span class="h2g">NOTRE</span> <span class="h2o">ÉQUIPE</span></h2>
+    <p class="s-desc">Gérant, managers, livreurs et sécurité — disponibles 24h/24.</p>
   </div>
+  <div class="team-grid" id="team-grid"></div>
 </div>
 
-<!-- ══ PAGE GALERIE ══ -->
+<!-- ══════════ PAGE PARTENAIRES ══════════ -->
+<div class="page std-page" id="page-partners">
+  <div class="page-header">
+    <div class="s-eye y">// Réseau</div>
+    <h2><span class="h2y">PARTENAIRES</span> <span class="h2o">OFFICIELS</span></h2>
+    <p class="s-desc">Les organisations avec qui LTD Grove Street collabore.</p>
+  </div>
+  <div class="part-grid" id="part-grid"></div>
+</div>
+
+<!-- ══════════ PAGE GALERIE ══════════ -->
 <div class="page" id="page-galerie">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Galerie</div></div>
-    <div class="gallery-grid" id="gallery-grid"></div>
+  <div class="page-header" style="padding:0;margin-bottom:26px">
+    <div class="s-eye" style="margin-bottom:6px">// Photos</div>
+    <h2><span class="h2g">GALERIE</span> <span class="h2o">DU MAGASIN</span></h2>
+    <p class="s-desc">Les meilleurs moments capturés au LTD Grove Street.</p>
   </div>
+  <div class="gallery-grid" id="gallery-grid"></div>
 </div>
 
-<!-- ══ PAGE AVIS ══ -->
-<div class="page" id="page-reviews">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Avis Clients</div></div>
-    <div class="rev-grid" id="rev-grid"></div>
-    <div class="rev-form">
-      <div class="rev-form-title">Laisser un avis</div>
-      <div class="fg"><span class="fl">Note</span><div class="star-row">
+<!-- ══════════ PAGE AVIS ══════════ -->
+<div class="page std-page" id="page-reviews">
+  <div class="page-header">
+    <div class="s-eye p">// Feedback</div>
+    <h2><span class="h2g">AVIS</span> <span class="h2o">CLIENTS</span></h2>
+    <p class="s-desc">Ce que nos clients pensent du LTD.</p>
+  </div>
+  <div class="rev-grid" id="rev-grid"></div>
+  <div class="rev-form fi2">
+    <div class="rev-form-title">// Laisser un avis</div>
+    <div class="fg"><span class="fl">Note</span>
+      <div class="star-row">
         <button class="sstar" onclick="setR(1)">★</button><button class="sstar" onclick="setR(2)">★</button>
         <button class="sstar" onclick="setR(3)">★</button><button class="sstar" onclick="setR(4)">★</button>
         <button class="sstar" onclick="setR(5)">★</button>
-      </div></div>
-      <div class="fg"><label class="fl">Pseudo</label><input class="fi" id="rev-auth" type="text" placeholder="Votre nom"></div>
-      <div class="fg"><label class="fl">Commentaire</label><textarea class="ft" id="rev-text" placeholder="Votre avis..."></textarea></div>
-      <button class="btn-primary" onclick="submitReview()" style="margin-top:4px">Publier →</button>
+      </div>
     </div>
+    <div class="fg"><label class="fl">Pseudo</label><input class="fi" id="rev-auth" type="text" placeholder="Votre nom"></div>
+    <div class="fg"><label class="fl">Commentaire</label><textarea class="ft" id="rev-text" placeholder="Votre expérience..."></textarea></div>
+    <button class="btn-g" onclick="submitReview()" style="margin-top:8px">Envoyer ›</button>
   </div>
 </div>
 
-<!-- ══ PAGE ADMIN ══ -->
+<!-- ══════════ PAGE ADMIN ══════════ -->
 <div class="page" id="page-admin">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Panel Admin</div></div>
-    <div class="admin-tabs">
-      <button class="atab active" onclick="aTab('products',this)">📦 Produits</button>
-      <button class="atab" onclick="aTab('catalogues',this)">🗂 Catalogues</button>
-      <button class="atab" onclick="aTab('users',this)">👤 Utilisateurs</button>
-      <button class="atab" onclick="aTab('team',this)">👥 Équipe</button>
-      <button class="atab" onclick="aTab('partners',this)">🤝 Partenaires</button>
-      <button class="atab" onclick="aTab('gallery',this)">📸 Galerie</button>
-      <button class="atab" onclick="aTab('reviews',this)">⭐ Avis</button>
-      <button class="atab" onclick="aTab('promos',this)">🎯 Promos</button>
-      <button class="atab" onclick="aTab('asettings',this)">🔧 Paramètres</button>
-    </div>
-
-    <div class="a-section active" id="as-products">
-      <div class="sec-head"><div class="sec-title">Produits</div><button class="btn-primary" onclick="openProdEdit(null)">+ Nouveau</button></div>
-      <div class="edit-box" id="prod-edit-box">
-        <div class="edit-box-title" id="prod-edit-title">Nouveau Produit</div>
-        <div class="form-row form-2">
-          <div class="fg"><label class="fl">Nom *</label><input class="fi" id="pe-name" type="text"></div>
-          <div class="fg"><label class="fl">Catégorie *</label>
-            <select class="fi" id="pe-cat">
-              <option value="jardinage">🌱 Jardinage</option>
-              <option value="nouveaute">🆕 Nouveauté</option>
-              <option value="quincaillerie">🔧 Quincaillerie</option>
-              <option value="entretien">🛢️ Entretien</option>
-              <option value="papeterie">📋 Papeterie</option>
-              <option value="quotidien">🛍️ Quotidien</option>
-              <option value="alimentaire">🍎 Alimentaire</option>
-              <option value="power">💪 Power</option>
-              <option value="cbd">🌿 CBD</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row form-2">
-          <div class="fg"><label class="fl">Prix ($) *</label><input class="fi" id="pe-price" type="number" min="0"></div>
-          <div class="fg"><label class="fl">Émoji</label><input class="fi" id="pe-icon" type="text" maxlength="4"></div>
-        </div>
-        <div class="fg"><label class="fl">Description</label><input class="fi" id="pe-desc" type="text"></div>
-        <div class="fg"><label class="fl">Image (URL)</label><input class="fi" id="pe-img" type="text" oninput="prevImg('pe-img','pe-img-prev')"><img id="pe-img-prev" class="img-preview" src="" alt=""></div>
-        <div class="fg"><label class="fl">Badge</label><input class="fi" id="pe-badge" type="text" placeholder="NEW, TOP, RARE..."></div>
-        <div style="display:flex;gap:9px;margin-top:8px"><button class="btn-primary" onclick="saveProd()">💾 Sauvegarder</button><button class="btn-secondary" onclick="closeProdEdit()">Annuler</button></div>
-      </div>
-      <div class="admin-list" id="prod-list"></div>
-    </div>
-
-    <div class="a-section" id="as-catalogues">
-      <div class="sec-head"><div class="sec-title">Catalogues</div><button class="btn-primary" onclick="addCat()">+ Nouveau</button></div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-        <select class="fi" id="ce-sel" onchange="renderCE()" style="width:220px"></select>
-        <button class="btn-sm" onclick="renameCat()">✏️ Renommer</button>
-        <button class="btn-sm red" onclick="deleteCat()">🗑 Supprimer</button>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
-        <div class="edit-box-title" id="ce-title">Catalogue</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Activez les produits et définissez un prix personnalisé.</p>
-        <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none" id="ce-cat-tabs"></div>
-        <div class="ptog-grid" id="ptog-grid"></div>
-      </div>
-    </div>
-
-    <div class="a-section" id="as-users">
-      <div class="sec-head"><div class="sec-title">Utilisateurs</div><button class="btn-primary" onclick="openUserEdit(null)">+ Nouveau</button></div>
-      <div class="edit-box" id="user-edit-box">
-        <div class="edit-box-title" id="user-edit-title">Nouvel Utilisateur</div>
-        <div class="form-row form-2">
-          <div class="fg"><label class="fl">Identifiant *</label><input class="fi" id="ue-user" type="text"></div>
-          <div class="fg"><label class="fl">Mot de passe *</label><input class="fi" id="ue-pass" type="password"></div>
-        </div>
-        <div class="form-row form-3">
-          <div class="fg"><label class="fl">Pseudo</label><input class="fi" id="ue-rp" type="text"></div>
-          <div class="fg"><label class="fl">Rang</label><select class="fi" id="ue-rank"><option value="client">Client</option><option value="entreprise">Entreprise</option><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
-          <div class="fg"><label class="fl">Catalogue</label><select class="fi" id="ue-cat"></select></div>
-        </div>
-        <div style="display:flex;gap:9px;margin-top:8px"><button class="btn-primary" onclick="saveUser()">💾 Sauvegarder</button><button class="btn-secondary" onclick="closeUserEdit()">Annuler</button></div>
-      </div>
-      <div class="admin-list" id="user-list"></div>
-    </div>
-
-    <div class="a-section" id="as-team">
-      <div class="sec-head"><div class="sec-title">Équipe</div><button class="btn-primary" onclick="openTeamEdit(null)">+ Nouveau membre</button></div>
-      <div class="edit-box" id="team-edit-box">
-        <div class="edit-box-title" id="team-edit-title">Nouveau Membre</div>
-        <div class="form-row form-2">
-          <div class="fg"><label class="fl">Nom *</label><input class="fi" id="te-name" type="text"></div>
-          <div class="fg"><label class="fl">Grade *</label><input class="fi" id="te-grade" type="text"></div>
-        </div>
-        <div class="fg"><label class="fl">Description</label><input class="fi" id="te-sub" type="text"></div>
-        <div class="fg"><label class="fl">Photo (URL)</label><input class="fi" id="te-img" type="text" oninput="prevImg('te-img','te-img-prev')"><img id="te-img-prev" class="img-preview" src="" alt=""></div>
-        <div class="fg"><label class="fl">Initiale (sans photo)</label><input class="fi" id="te-init" type="text" maxlength="2"></div>
-        <div style="display:flex;gap:9px;margin-top:8px"><button class="btn-primary" onclick="saveTeam()">💾 Sauvegarder</button><button class="btn-secondary" onclick="closeTeamEdit()">Annuler</button></div>
-      </div>
-      <div class="admin-list" id="team-admin-list"></div>
-    </div>
-
-    <div class="a-section" id="as-partners">
-      <div class="sec-head"><div class="sec-title">Partenaires</div><button class="btn-primary" onclick="openPartEdit(null)">+ Nouveau</button></div>
-      <div class="edit-box" id="part-edit-box">
-        <div class="edit-box-title" id="part-edit-title">Nouveau Partenaire</div>
-        <div class="form-row form-2">
-          <div class="fg"><label class="fl">Nom *</label><input class="fi" id="pae-name" type="text"></div>
-          <div class="fg"><label class="fl">Émoji</label><input class="fi" id="pae-icon" type="text" maxlength="4"></div>
-        </div>
-        <div class="fg"><label class="fl">Description</label><input class="fi" id="pae-desc" type="text"></div>
-        <div class="fg"><label class="fl">Logo (URL)</label><input class="fi" id="pae-img" type="text" oninput="prevImg('pae-img','pae-img-prev')"><img id="pae-img-prev" class="img-preview" src="" alt=""></div>
-        <div style="display:flex;gap:9px;margin-top:8px"><button class="btn-primary" onclick="savePart()">💾 Sauvegarder</button><button class="btn-secondary" onclick="closePartEdit()">Annuler</button></div>
-      </div>
-      <div class="admin-list" id="part-admin-list"></div>
-    </div>
-
-    <div class="a-section" id="as-gallery">
-      <div class="sec-head"><div class="sec-title">Galerie</div><button class="btn-primary" onclick="openGalEdit()">+ Ajouter photo</button></div>
-      <div class="edit-box" id="gal-edit-box">
-        <div class="edit-box-title">Nouvelle Photo</div>
-        <div class="fg"><label class="fl">URL Image *</label><input class="fi" id="gal-img" type="text" oninput="prevImg('gal-img','gal-img-prev')"><img id="gal-img-prev" class="img-preview" src="" alt=""></div>
-        <div class="fg"><label class="fl">Titre</label><input class="fi" id="gal-title" type="text"></div>
-        <div style="display:flex;gap:9px;margin-top:8px"><button class="btn-primary" onclick="saveGal()">💾 Ajouter</button><button class="btn-secondary" onclick="closeGalEdit()">Annuler</button></div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px" id="gal-admin-grid"></div>
-    </div>
-
-    <div class="a-section" id="as-reviews">
-      <div class="sec-head"><div class="sec-title">Avis</div></div>
-      <div class="admin-list" id="rev-admin-list"></div>
-    </div>
-
-    <div class="a-section" id="as-promos">
-      <div class="sec-head"><div class="sec-title">Bannières Promo</div></div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Les 3 bannières affichées sur la page d'accueil sous le hero.</p>
-      <div id="promo-edit-list"></div>
-    </div>
-
-    <div class="a-section" id="as-asettings">
-      <div class="settings-grid">
-        <div class="settings-card"><div class="settings-card-title">🔗 Webhook Discord</div>
-          <div class="fg"><label class="fl">URL</label><input class="fi" id="st-webhook" type="text" placeholder="https://discord.com/api/webhooks/..."></div>
-          <button class="btn-primary" onclick="saveSettings()">💾 Sauvegarder</button>
-        </div>
-        <div class="settings-card"><div class="settings-card-title">🔒 Mot de passe Admin</div>
-          <div class="fg"><label class="fl">Nouveau MDP</label><input class="fi" id="st-np" type="password"></div>
-          <div class="fg"><label class="fl">Confirmer</label><input class="fi" id="st-cp" type="password"></div>
-          <button class="btn-primary" onclick="changePass()">🔑 Changer</button>
-        </div>
-        <div class="settings-card"><div class="settings-card-title">📊 Statistiques</div>
-          <div class="stat-grid" style="margin-bottom:0">
-            <div class="stat-card"><div class="stat-n red" id="st-orders">0</div><div class="stat-l">Commandes</div></div>
-            <div class="stat-card"><div class="stat-n grn" id="st-prods">0</div><div class="stat-l">Produits</div></div>
-            <div class="stat-card"><div class="stat-n ylw" id="st-users">0</div><div class="stat-l">Utilisateurs</div></div>
-          </div>
-        </div>
-        <div class="settings-card"><div class="settings-card-title">💾 Données</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-sm" onclick="exportDB()">⬇️ Exporter</button>
-            <button class="btn-sm" onclick="document.getElementById('imp-input').click()">⬆️ Importer</button>
-            <input type="file" id="imp-input" accept=".json" style="display:none" onchange="importDB(this)">
-            <button class="btn-sm red" onclick="resetDB()">🗑 Reset</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="admin-head"><div class="admin-title">⚙️ Admin</div></div>
+  <div class="admin-nav">
+    <button class="atab active" onclick="aTab('products',this)">📦 Produits</button>
+    <button class="atab" onclick="aTab('catalogues',this)">🗂 Catalogues</button>
+    <button class="atab" onclick="aTab('users',this)">👤 Utilisateurs</button>
+    <button class="atab" onclick="aTab('team',this)">👥 Équipe</button>
+    <button class="atab" onclick="aTab('partners',this)">🤝 Partenaires</button>
+    <button class="atab" onclick="aTab('gallery',this)">📸 Galerie</button>
+    <button class="atab" onclick="aTab('reviews',this)">⭐ Avis</button>
+    <button class="atab" onclick="aTab('settings',this)">🔧 Paramètres</button>
   </div>
-</div>
 
-<!-- ══ PAGE PARAMÈTRES ══ -->
-<div class="page" id="page-settings">
-  <div class="container">
-    <div class="section-head"><div class="section-title">Paramètres</div></div>
-    <div class="stat-grid" id="param-stats"></div>
-    <div class="settings-grid" style="margin-top:20px">
-      <div class="settings-card"><div class="settings-card-title">🎨 Thème du site</div>
-        <div class="fg"><label class="fl">Apparence</label>
-          <select class="fi" id="theme-select" onchange="setTheme(this.value)">
-            <option value="light">☀️ Thème Clair</option>
-            <option value="dark">🌙 Thème Sombre</option>
+  <div class="a-section active" id="as-products">
+    <div class="sec-head"><div class="sec-title">📦 Produits</div><button class="btn-g" onclick="openProdEdit(null)">➕ Nouveau</button></div>
+    <div class="edit-box" id="prod-edit-box">
+      <div class="edit-title" id="prod-edit-title">Nouveau Produit</div>
+      <div class="form-row form-2">
+        <div class="fg"><label class="fl">Nom *</label><input class="fi" id="pe-name" type="text" placeholder="Pile Verte"></div>
+        <div class="fg"><label class="fl">Catégorie *</label>
+          <select class="fi" id="pe-cat">
+            <option value="quincaillerie">🔧 Quincaillerie</option>
+            <option value="quotidien">🧃 Quotidien</option>
+            <option value="entretien">🛢️ Entretien</option>
+            <option value="papeterie">📋 Papeterie</option>
+            <option value="jardinage">🌱 Jardinage</option>
           </select>
         </div>
-        <p style="font-size:11px;color:var(--muted);margin-top:4px">Change l'apparence pour tous les visiteurs.</p>
       </div>
-      <div class="settings-card"><div class="settings-card-title">🔗 Webhook Discord</div>
-        <div class="fg"><label class="fl">URL</label><input class="fi" id="p-webhook" type="text"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-          <button class="btn-primary" onclick="paramSaveWebhook()">💾 Sauvegarder</button>
-          <button class="btn-secondary" onclick="paramTestWebhook()">🧪 Tester</button>
-          <span id="p-wh-status" style="font-size:11px;color:var(--muted);align-self:center"></span>
+      <div class="form-row form-2">
+        <div class="fg"><label class="fl">Prix ($) *</label><input class="fi" id="pe-price" type="number" min="0" placeholder="50"></div>
+        <div class="fg"><label class="fl">Émoji</label><input class="fi" id="pe-icon" type="text" placeholder="🔋" maxlength="4"></div>
+      </div>
+      <div class="fg"><label class="fl">Description</label><input class="fi" id="pe-desc" type="text" placeholder="Description courte"></div>
+      <div class="fg"><label class="fl">Image (URL)</label>
+        <input class="fi" id="pe-img" type="text" placeholder="https://i.goopics.net/xxxxx.jpg" oninput="prevImg('pe-img','pe-img-prev')">
+        <img id="pe-img-prev" class="img-preview" src="" alt="">
+      </div>
+      <div class="fg"><label class="fl">Badge</label><input class="fi" id="pe-badge" type="text" placeholder="TOP, NEW, RARE..."></div>
+      <div class="edit-actions"><button class="btn-g" onclick="saveProd()">💾 Sauvegarder</button><button class="btn-r" onclick="closeProdEdit()">✕</button></div>
+    </div>
+    <div class="admin-list" id="prod-list"></div>
+  </div>
+
+  <div class="a-section" id="as-catalogues">
+    <div class="sec-head"><div class="sec-title">🗂 Catalogues</div><button class="btn-g" onclick="addCat()">➕ Nouveau</button></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <select class="fi" id="ce-sel" onchange="renderCE()" style="width:200px"></select>
+      <button class="btn-sm y" onclick="renameCat()">✏️ Renommer</button>
+      <button class="btn-sm r" onclick="deleteCat()">🗑 Supprimer</button>
+    </div>
+    <div class="ce-wrap">
+      <div class="edit-title" id="ce-title">Catalogue</div>
+      <p style="font-size:12px;color:var(--dim2);margin-bottom:13px;font-weight:400">Activez les produits et définissez un prix personnalisé.</p>
+      <div class="ce-cat-tabs" id="ce-cat-tabs"></div>
+      <div class="ptog-grid" id="ptog-grid"></div>
+    </div>
+  </div>
+
+  <div class="a-section" id="as-users">
+    <div class="sec-head"><div class="sec-title">👤 Utilisateurs</div><button class="btn-g" onclick="openUserEdit(null)">➕ Nouveau</button></div>
+    <div class="edit-box" id="user-edit-box">
+      <div class="edit-title" id="user-edit-title">Nouvel Utilisateur</div>
+      <div class="form-row form-2">
+        <div class="fg"><label class="fl">Identifiant *</label><input class="fi" id="ue-user" type="text" placeholder="john_doe"></div>
+        <div class="fg"><label class="fl">Mot de passe *</label><input class="fi" id="ue-pass" type="password" placeholder="••••••••"></div>
+      </div>
+      <div class="form-row form-3">
+        <div class="fg"><label class="fl">Pseudo affiché</label><input class="fi" id="ue-rp" type="text" placeholder="John Doe"></div>
+        <div class="fg"><label class="fl">Rang</label>
+          <select class="fi" id="ue-rank">
+            <option value="client">Client</option>
+            <option value="entreprise">Entreprise</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Catalogue</label><select class="fi" id="ue-cat"></select></div>
+      </div>
+      <div class="edit-actions"><button class="btn-g" onclick="saveUser()">💾 Sauvegarder</button><button class="btn-r" onclick="closeUserEdit()">✕</button></div>
+    </div>
+    <div class="admin-list" id="user-list"></div>
+  </div>
+
+  <div class="a-section" id="as-team">
+    <div class="sec-head"><div class="sec-title">👥 Équipe</div><button class="btn-g" onclick="openTeamEdit(null)">➕ Nouveau membre</button></div>
+    <div class="edit-box" id="team-edit-box">
+      <div class="edit-title" id="team-edit-title">Nouveau Membre</div>
+      <div class="form-row form-2">
+        <div class="fg"><label class="fl">Nom *</label><input class="fi" id="te-name" type="text" placeholder="Flash"></div>
+        <div class="fg"><label class="fl">Grade *</label><input class="fi" id="te-grade" type="text" placeholder="CEO, MANAGER..."></div>
+      </div>
+      <div class="fg"><label class="fl">Description</label><input class="fi" id="te-sub" type="text" placeholder="Fondateur du LTD"></div>
+      <div class="fg"><label class="fl">Photo (URL)</label>
+        <input class="fi" id="te-img" type="text" placeholder="https://i.goopics.net/xxxxx.jpg" oninput="prevImg('te-img','te-img-prev')">
+        <img id="te-img-prev" class="img-preview" src="" alt="">
+      </div>
+      <div class="fg"><label class="fl">Initiale (sans photo)</label><input class="fi" id="te-init" type="text" placeholder="F" maxlength="2"></div>
+      <div class="edit-actions"><button class="btn-g" onclick="saveTeam()">💾 Sauvegarder</button><button class="btn-r" onclick="closeTeamEdit()">✕</button></div>
+    </div>
+    <div class="admin-list" id="team-admin-list"></div>
+  </div>
+
+  <div class="a-section" id="as-partners">
+    <div class="sec-head"><div class="sec-title">🤝 Partenaires</div><button class="btn-g" onclick="openPartEdit(null)">➕ Nouveau</button></div>
+    <div class="edit-box" id="part-edit-box">
+      <div class="edit-title" id="part-edit-title">Nouveau Partenaire</div>
+      <div class="form-row form-2">
+        <div class="fg"><label class="fl">Nom *</label><input class="fi" id="pae-name" type="text" placeholder="Fleeca Bank"></div>
+        <div class="fg"><label class="fl">Émoji</label><input class="fi" id="pae-icon" type="text" placeholder="🏦" maxlength="4"></div>
+      </div>
+      <div class="fg"><label class="fl">Description</label><input class="fi" id="pae-desc" type="text" placeholder="Description du partenariat"></div>
+      <div class="fg"><label class="fl">Logo (URL)</label>
+        <input class="fi" id="pae-img" type="text" placeholder="https://i.goopics.net/xxxxx.jpg" oninput="prevImg('pae-img','pae-img-prev')">
+        <img id="pae-img-prev" class="img-preview" src="" alt="">
+      </div>
+      <div class="edit-actions"><button class="btn-g" onclick="savePart()">💾 Sauvegarder</button><button class="btn-r" onclick="closePartEdit()">✕</button></div>
+    </div>
+    <div class="admin-list" id="part-admin-list"></div>
+  </div>
+
+  <div class="a-section" id="as-gallery">
+    <div class="sec-head"><div class="sec-title">📸 Galerie</div><button class="btn-g" onclick="openGalEdit(null)">➕ Ajouter photo</button></div>
+    <div class="edit-box" id="gal-edit-box">
+      <div class="edit-title">Nouvelle Photo</div>
+      <div class="fg"><label class="fl">URL Image *</label>
+        <input class="fi" id="gal-img" type="text" placeholder="https://i.goopics.net/xxxxx.jpg" oninput="prevImg('gal-img','gal-img-prev')">
+        <img id="gal-img-prev" class="img-preview" src="" alt="">
+      </div>
+      <div class="fg"><label class="fl">Titre</label><input class="fi" id="gal-title" type="text" placeholder="Entrée du magasin"></div>
+      <div class="edit-actions"><button class="btn-g" onclick="saveGal()">💾 Ajouter</button><button class="btn-r" onclick="closeGalEdit()">✕</button></div>
+    </div>
+    <div class="gal-admin-grid" id="gal-admin-grid"></div>
+  </div>
+
+  <div class="a-section" id="as-reviews">
+    <div class="sec-head"><div class="sec-title">⭐ Avis</div></div>
+    <div class="admin-list" id="rev-admin-list"></div>
+  </div>
+
+  <div class="a-section" id="as-settings">
+    <div class="settings-grid">
+      <div class="settings-card">
+        <div class="settings-card-title">🔗 Webhook Discord</div>
+        <div class="fg"><label class="fl">URL Webhook</label><input class="fi" id="st-webhook" type="text" placeholder="https://discord.com/api/webhooks/..."></div>
+        <button class="btn-g" onclick="saveSettings()">💾 Sauvegarder</button>
+      </div>
+      <div class="settings-card">
+        <div class="settings-card-title">🔒 Mot de passe Admin</div>
+        <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fi" id="st-np" type="password" placeholder="••••••••"></div>
+        <div class="fg"><label class="fl">Confirmer</label><input class="fi" id="st-cp" type="password" placeholder="••••••••"></div>
+        <button class="btn-g" onclick="changePass()">🔑 Changer</button>
+      </div>
+      <div class="settings-card">
+        <div class="settings-card-title">📊 Statistiques</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim2);line-height:2.2">
+          Commandes : <span id="st-orders" style="color:var(--green)">0</span><br>
+          Produits : <span id="st-prods" style="color:var(--yellow)">0</span><br>
+          Utilisateurs : <span id="st-users" style="color:var(--purple)">0</span><br>
+          Photos galerie : <span id="st-gallery" style="color:var(--green)">0</span>
         </div>
       </div>
-      <div class="settings-card"><div class="settings-card-title">🔒 Mot de passe Admin</div>
-        <div class="fg"><label class="fl">Nouveau MDP</label><input class="fi" id="p-np" type="password"></div>
-        <div class="fg"><label class="fl">Confirmer</label><input class="fi" id="p-cp" type="password"></div>
-        <button class="btn-primary" onclick="paramChangePass()">🔑 Changer</button>
-      </div>
-    </div>
-    <div style="margin-top:24px"><div class="section-title" style="font-size:18px;margin-bottom:14px">Utilisateurs</div><div class="admin-list" id="param-users"></div></div>
-    <div style="margin-top:24px"><div class="section-title" style="font-size:18px;margin-bottom:14px">Commandes</div><div class="admin-list" id="param-orders"></div></div>
-    <div style="margin-top:24px"><div class="section-title" style="font-size:18px;margin-bottom:14px">Tous les avis</div><div class="admin-list" id="param-reviews-list"></div></div>
-    <div style="margin-top:24px"><div class="section-title" style="font-size:18px;margin-bottom:14px">Base de données</div>
-      <div class="settings-card" style="max-width:360px">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn-sm" onclick="exportDB()">⬇️ Exporter JSON</button>
-          <button class="btn-sm" onclick="document.getElementById('param-imp').click()">⬆️ Importer JSON</button>
-          <input type="file" id="param-imp" accept=".json" style="display:none" onchange="importDB(this)">
-          <button class="btn-sm red" onclick="resetDB()">🗑 Reset total</button>
+      <div class="settings-card">
+        <div class="settings-card-title">💾 Données</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:6px">
+          <button class="btn-sm y" onclick="exportDB()">⬇️ Exporter</button>
+          <button class="btn-sm p" onclick="document.getElementById('import-input').click()">⬆️ Importer</button>
+          <input type="file" id="import-input" accept=".json" style="display:none" onchange="importDB(this)">
+          <button class="btn-sm r" onclick="resetDB()">🗑 Reset</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<footer>© 2025 <span>LTD Grove Street</span> · Los Santos · Davis · Toujours ouvert</footer>
+<!-- ══════════ PAGE PARAMÈTRES ══════════ -->
+<div class="page" id="page-settings" style="padding:90px 44px 60px">
+  <div class="page-header">
+    <div class="s-eye r">// Admin Only</div>
+    <h2 style="font-family:'Permanent Marker',cursive;font-size:clamp(28px,4vw,52px)"><span style="color:var(--red);text-shadow:3px 3px 0 #000">PARAMÈTRES</span></h2>
+  </div>
 
-<!-- CART FLOAT -->
-<button id="theme-toggle" onclick="toggleTheme()" style="position:fixed;bottom:20px;left:20px;z-index:800;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);font-size:18px;cursor:pointer;box-shadow:0 2px 12px var(--shadow);display:flex;align-items:center;justify-content:center;transition:all .2s" title="Changer le thème">🌙</button>
-<button id="cart-float" style="display:none;position:fixed;bottom:20px;right:20px;z-index:800" class="cart-btn" onclick="openOrderMo()">
-  🛒 Panier <div class="cart-bubble" id="cart-bubble">0</div>
-</button>
+  <div style="margin-bottom:32px">
+    <div class="s-eye">// Vue d'ensemble</div>
+    <div class="param-stat-grid" style="margin-top:14px" id="param-stats-grid"></div>
+  </div>
 
-<!-- ORDER MODAL -->
-<div class="overlay" id="order-ov" onclick="closeOvOut(event,'order-ov')">
-  <div class="modal" style="max-width:540px">
-    <button class="modal-close" onclick="closeOv('order-ov')">✕</button>
-    <div id="order-form-wrap">
-      <div class="modal-title">🛒 Votre Commande</div>
-      <p class="modal-sub">Vérifiez votre panier avant de valider.</p>
-      <div id="cart-list"></div>
-      <div class="total-row"><span class="total-label">Total</span><span class="total-val" id="cart-total">$0</span></div>
-      <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="o-phone" type="text" placeholder="555-0147"></div>
-      <div class="fg"><label class="fl">Adresse</label><input class="fi" id="o-addr" type="text" placeholder="Grove Street, Davis"></div>
-      <div class="fg"><label class="fl">Notes</label><textarea class="ft" id="o-notes" placeholder="Informations supplémentaires..."></textarea></div>
-      <div class="modal-foot">
-        <button class="btn-secondary" style="flex:1" onclick="closeOv('order-ov')">Annuler</button>
-        <button class="btn-primary" style="flex:2;justify-content:center" id="order-btn" onclick="submitOrder()">✅ Valider la commande</button>
+  <div style="margin-bottom:32px">
+    <div class="s-eye">// Webhook Discord</div>
+    <div class="settings-card" style="max-width:520px;margin-top:14px">
+      <div class="settings-card-title">🔗 Webhook</div>
+      <div class="fg"><label class="fl">URL</label><input class="fi" id="p-webhook" type="text" placeholder="https://discord.com/api/webhooks/..."></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-g" onclick="paramSaveWebhook()">💾 Sauvegarder</button>
+        <button class="btn-sm y" onclick="paramTestWebhook()">🧪 Tester</button>
+        <span id="p-webhook-status" style="font-family:'Share Tech Mono',monospace;font-size:9px;align-self:center;color:var(--dim2)"></span>
       </div>
     </div>
-    <div class="order-success" id="order-suc">
-      <div class="order-success-icon">✅</div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div class="s-eye">// Mot de passe admin</div>
+    <div class="settings-card" style="max-width:420px;margin-top:14px">
+      <div class="settings-card-title">🔒 Changer le mot de passe</div>
+      <div class="fg"><label class="fl">Nouveau MDP</label><input class="fi" id="p-np" type="password" placeholder="••••••••"></div>
+      <div class="fg"><label class="fl">Confirmer</label><input class="fi" id="p-cp" type="password" placeholder="••••••••"></div>
+      <button class="btn-g" onclick="paramChangePass()">🔑 Changer</button>
+    </div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div class="s-eye">// Tous les comptes</div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:2px" id="param-users-list"></div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div class="s-eye y">// Historique commandes</div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:2px" id="param-orders-list"></div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div class="s-eye p">// Tous les avis clients</div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:2px" id="param-reviews-list"></div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div class="s-eye r">// Données &amp; Maintenance</div>
+    <div class="settings-card" style="margin-top:14px;max-width:420px">
+      <div class="settings-card-title">💾 Base de données</div>
+      <p style="font-size:12px;color:var(--dim2);margin-bottom:13px;font-weight:400">Export/import de toutes les données du site.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-sm y" onclick="exportDB()">⬇️ Exporter JSON</button>
+        <button class="btn-sm p" onclick="document.getElementById('param-import-input').click()">⬆️ Importer JSON</button>
+        <input type="file" id="param-import-input" accept=".json" style="display:none" onchange="importDB(this)">
+        <button class="btn-sm r" onclick="resetDB()">🗑 Reset total</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <span class="foot-copy">© 2025 LTD Grove Street</span>
+    <span class="foot-srv">🟢 EN LIGNE</span>
+  </div>
+</footer>
+
+<!-- CART FLOAT -->
+<div class="cart-float" id="cart-float" onclick="openOrderMo()">
+  🛒 Panier <div class="cbub" id="cbub">0</div> <span style="opacity:.4;font-size:11px">›</span>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="ov" id="order-ov" onclick="closeOvOut(event,'order-ov')">
+  <div class="mo">
+    <button class="mo-close" onclick="closeOv('order-ov')">✕</button>
+    <div id="order-form">
+      <div class="mo-title">🛒 Commande</div>
+      <p class="mo-sub">Vérifiez votre panier et renseignez vos infos.</p>
+      <div id="cart-list"></div>
+      <div class="t-row"><span class="t-lbl">Total</span><span class="t-val" id="cart-total">$0</span></div>
+      <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="o-phone" type="text" placeholder="555-0147"></div>
+      <div class="fg"><label class="fl">Adresse de livraison</label><input class="fi" id="o-addr" type="text" placeholder="Grove Street, Davis"></div>
+      <div class="fg"><label class="fl">Notes</label><textarea class="ft" id="o-notes" placeholder="Infos supplémentaires..."></textarea></div>
+      <div class="mfoot">
+        <button class="b-cancel" onclick="closeOv('order-ov')">Annuler</button>
+        <button class="b-ok" id="order-btn" onclick="submitOrder()">✅ Valider</button>
+      </div>
+    </div>
+    <div class="order-suc" id="order-suc">
+      <div class="order-suc-ico">✅</div>
       <h3>Commande envoyée !</h3>
-      <p>Votre commande a bien été transmise.<br>L'équipe vous contactera très bientôt.</p>
-      <button class="btn-primary" onclick="closeOv('order-ov')" style="margin-top:16px">Fermer</button>
+      <p>Votre commande a été transmise.<br>L'équipe vous contactera très bientôt.</p>
+      <button class="btn-g" onclick="closeOv('order-ov')" style="margin-top:14px">Fermer ›</button>
     </div>
   </div>
 </div>
 
 <!-- LOGIN MODAL -->
-<div class="overlay" id="login-ov" onclick="closeOvOut(event,'login-ov')">
-  <div class="modal" style="max-width:380px">
-    <button class="modal-close" onclick="closeOv('login-ov')">✕</button>
-    <div style="text-align:center;margin-bottom:20px">
-      <img src="https://raw.githubusercontent.com/Mrstark59/ltd-grove-street/main/logo%20ltd.png" alt="LTD" style="width:56px;height:56px;border-radius:10px;margin:0 auto 10px;object-fit:cover">
-      <div class="modal-title">LTD Grove Street</div>
-      <p class="modal-sub" style="margin-bottom:0">Connexion membre</p>
-    </div>
+<div class="ov" id="login-ov" onclick="closeOvOut(event,'login-ov')">
+  <div class="mo login-mo">
+    <button class="mo-close" onclick="closeOv('login-ov')">✕</button>
+    <div class="login-logo">LTD Grove Street</div>
+    <div class="login-sub">Connexion membre</div>
     <div class="login-err" id="login-err">Identifiants incorrects</div>
     <div class="fg"><label class="fl">Identifiant</label><input class="fi" id="l-user" type="text" placeholder="votre_identifiant" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <div class="fg"><label class="fl">Mot de passe</label><input class="fi" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button class="btn-primary" onclick="doLogin()" style="width:100%;justify-content:center;margin-top:6px">Se connecter →</button>
+    <button class="btn-g" onclick="doLogin()" style="width:100%;justify-content:center;margin-top:5px">Se connecter</button>
   </div>
 </div>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lb-close" onclick="closeLightbox()">✕</button>
-  <button class="lb-nav lb-prev" onclick="event.stopPropagation();lbNav(-1)">‹</button>
+  <button class="lb-prev" onclick="event.stopPropagation();lbNav(-1)">‹</button>
   <img id="lb-img" src="" alt="" onclick="event.stopPropagation()">
-  <button class="lb-nav lb-next" onclick="event.stopPropagation();lbNav(1)">›</button>
-</div>
-
-<!-- CONFIRM DIALOG -->
-<div class="overlay" id="confirm-ov">
-  <div class="modal" style="max-width:340px;text-align:center">
-    <div class="modal-title" style="margin-bottom:8px">Confirmation</div>
-    <p id="confirm-msg" style="color:var(--muted);font-size:14px;margin-bottom:20px"></p>
-    <div style="display:flex;gap:10px">
-      <button class="btn-secondary" style="flex:1" onclick="closeOv('confirm-ov')">Annuler</button>
-      <button class="btn-danger" style="flex:1;padding:10px;font-size:13px" id="confirm-yes">Confirmer</button>
-    </div>
-  </div>
+  <button class="lb-next" onclick="event.stopPropagation();lbNav(1)">›</button>
+  <div class="lb-caption" id="lb-caption"></div>
 </div>
 
 <div class="notif" id="notif"></div>
 
-<script>
-
-// ══════════════════════════════════════════════
-//  FIREBASE SDK (compat — fonctionne partout)
-// ══════════════════════════════════════════════
-const firebaseConfig = {
-  apiKey:            "AIzaSyDdFs4Lcb9bq4Y3tHQWEzpbSVQDD2VaLg4",
-  authDomain:        "ltd-grove-street-80115.firebaseapp.com",
-  databaseURL:       "https://ltd-grove-street-80115-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:         "ltd-grove-street-80115",
-  storageBucket:     "ltd-grove-street-80115.firebasestorage.app",
-  messagingSenderId: "71900497374",
-  appId:             "1:71900497374:web:a636c37a18e7b3dc8b494f"
-};
-firebase.initializeApp(firebaseConfig);
-const fbDB = firebase.database();
-
-// Helpers Firebase compat
-async function fbGet(path){ const s=await fbDB.ref(path).get(); return s.exists()?s.val():null; }
-async function fbSet(path,val){ await fbDB.ref(path).set(val); }
-function toObj(arr){ return arr.reduce((o,item,i)=>{o[item.id!=null?'i'+item.id:'k'+i]=item;return o;},{});}
-
-// Chargement depuis Firebase
-async function loadDBFromFirebase(){
-  ntfLoading(true);
-  try{
-    const r = await fbGet('db');
-    if(r){
-      DB.adminPassHash = r.adminPassHash ?? DB.adminPassHash;
-      DB.webhook       = r.webhook       ?? '';
-      DB.orderCount    = r.orderCount    ?? DB.orderCount;
-      if(r.theme)      { DB.theme = r.theme; applyTheme(r.theme); }
-      if(r.promos)     DB.promos     = r.promos;
-      if(r.products)   DB.products   = Object.values(r.products);
-      if(r.catalogues) DB.catalogues = Object.values(r.catalogues);
-      if(r.users)      DB.users      = Object.values(r.users);
-      if(r.team)       DB.team       = Object.values(r.team);
-      if(r.partners)   DB.partners   = Object.values(r.partners);
-      if(r.gallery)    DB.gallery    = Object.values(r.gallery);
-      if(r.orders)     DB.orders     = Object.values(r.orders);
-      if(r.reviews)    DB.reviews    = Object.values(r.reviews);
-    } else {
-      await saveDB();
-    }
-  }catch(e){ console.error('Firebase load error:',e); }
-  ntfLoading(false);
-  refreshHomeStats(true);
-  buildTicker();
-  renderHomeGrid();
-  initObs();
-  // Reload current page content
-  const activePage = document.querySelector('.page.active');
-  if(activePage) {
-    const pid = activePage.id.replace('page-','');
-    if(pid==='team')     renderTeamPage();
-    if(pid==='partners') renderPartnersPage();
-    if(pid==='galerie')  renderGalerie();
-    if(pid==='reviews')  renderReviews();
-    if(pid==='commander')renderCommander();
-    if(pid==='home')renderHomeGrid();
-  }
-}
-
-// Sauvegarde vers Firebase + localStorage
-async function saveDB(){
-  try{ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }catch(e){}
-  try{
-    await fbSet('db',{
-      theme:         DB.theme||'light',
-      adminPassHash: DB.adminPassHash,
-      webhook:       DB.webhook,
-      orderCount:    DB.orderCount,
-      promos:        DB.promos,
-      products:      toObj(DB.products),
-      catalogues:    DB.catalogues.reduce((o,c)=>{o[c.id]=c;return o;},{}),
-      users:         toObj(DB.users),
-      team:          toObj(DB.team),
-      partners:      toObj(DB.partners),
-      gallery:       DB.gallery.length ? toObj(DB.gallery.map((g,i)=>({...g,id:g.id??i+1}))) : {},
-      orders:        DB.orders.length  ? DB.orders.reduce((o,x,i)=>{o['o'+(Date.now()+i)]=x;return o;},{}) : {},
-      reviews:       toObj(DB.reviews),
-    });
-  }catch(e){ console.error('Firebase save error:',e); ntf('⚠️ Erreur sync Firebase',true); }
-}
-
-// Indicateur de chargement
-function ntfLoading(on){
-  let el=document.getElementById('fb-loading');
-  if(!el){
-    el=document.createElement('div');el.id='fb-loading';
-    el.style.cssText='position:fixed;top:82px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(10,9,8,.97);border:1px solid rgba(74,222,128,.3);color:#4ade80;font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;padding:5px 14px;pointer-events:none;transition:opacity .3s;white-space:nowrap';
-    document.body.appendChild(el);
-  }
-  el.textContent='⏳ SYNC FIREBASE...';
-  el.style.opacity=on?'1':'0';
-}
-
-
-function renderHomeGrid(){
-  const grid = document.getElementById('home-prod-grid');
-  if(!grid) return;
-  const prods = DB.products.slice(0,12);
-  grid.innerHTML = prods.map(p => prodCardHTML(p, p.price, false)).join('');
-}
-
-function prodCardHTML(p, dp, isCustom){
-  const badgeColors = {RARE:'pb-purple',NEW:'pb-green','🔥':'pb-red','💎':'pb-purple',TOP:'pb-red'};
-  const bc = p.badge ? (badgeColors[p.badge]||'pb-yellow') : '';
-  return `<div class="pcard">
-    ${p.badge ? `<div class="pcard-badge ${bc}">${p.badge}</div>` : ''}
-    <div class="pcard-img-wrap">
-      ${p.img ? `<img class="pcard-img" src="${p.img}" alt="${esc(p.name)}" onerror="this.style.display='none'">` : ''}
-      <div class="pcard-icon" style="${p.img?'display:none':''}">${p.icon||'📦'}</div>
-    </div>
-    <div class="pcard-body">
-      <div class="pcard-cat">${p.cat}</div>
-      <div class="pcard-name">${p.name}</div>
-      <div class="pcard-desc">${p.desc||''}</div>
-      <div class="pcard-foot">
-        <div class="pcard-price-wrap">
-          ${isCustom?`<div class="pcard-old">$${p.price}</div>`:''}
-          <div class="pcard-price${isCustom?' custom':''}">$${dp}</div>
-        </div>
-        <button class="pcard-add" onclick="addCart(${p.id},${dp},'${esc(p.name)}','${p.icon||'📦'}')">+</button>
-      </div>
-    </div>
-  </div>`;
-}
-
+<script type="module">
 // ══════════════════════════════════════════════
 //  SÉCURITÉ — Hash SHA-256 simple (côté client)
 //  Les mots de passe sont hashés avant stockage
@@ -894,204 +835,153 @@ function hashQuick(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charC
 // ══════════════════════════════════════════════
 const DB_KEY='ltd_gs_v2';
 
-
 function defaultDB(){
-  
-const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-const hEnt   = 'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644';
-const hCli   = '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
-const PRODS=[
-  // JARDINAGE
-  {id:1, name:'Fertilisant',        cat:'jardinage',      icon:'🌱', desc:'Booste la croissance de vos plantes.',        price:10,  img:'https://i.postimg.cc/SQnxv0pV/91BPwn-XWpu-L-AC-UF1000-1000-QL80.jpg', badge:''},
-  {id:2, name:'Pot de Fleur',       cat:'jardinage',      icon:'🪴', desc:'Pour cultiver en beauté.',                     price:10,  img:'https://i.postimg.cc/pTXt8jPs/339427-010.jpg', badge:''},
-  {id:3, name:'Table',              cat:'jardinage',      icon:'🪑', desc:'Solide et pratique pour votre espace.',        price:10,  img:'https://i.postimg.cc/4dqsgdTH/table.jpg', badge:''},
-  {id:4, name:'Terre',              cat:'jardinage',      icon:'🌿', desc:'De la bonne terre pour faire pousser.',        price:12,  img:'https://i.postimg.cc/zG7Nfpr3/terre.jpg', badge:''},
-  {id:5, name:'Bac de jardinage',   cat:'jardinage',      icon:'🌿', desc:'Grand format pour les projets ambitieux.',     price:20,  img:'https://i.postimg.cc/nzybWPv6/shopping.webp', badge:''},
-  {id:6, name:'Lumière violette',   cat:'jardinage',      icon:'💡', desc:'Idéale pour faire pousser en intérieur.',      price:36,  img:'https://i.postimg.cc/7ZHvj72y/lumiere-eclairage-noire-fluo.png', badge:'💎'},
-  {id:7, name:'Cisaille',           cat:'jardinage',      icon:'✂️', desc:'Coupe net, coupe propre.',                     price:1500,img:'https://i.postimg.cc/t4w8Fngb/image-2026-04-30-222857736.png', badge:'RARE'},
-  // NOUVEAUTÉ
-  {id:8, name:'Rose',               cat:'nouveaute',      icon:'🌹', desc:'Une rose fraîche, livrée avec soin.',          price:155, img:'https://i.postimg.cc/P570F7bz/rose.jpg', badge:'NEW'},
-  {id:9, name:'Bouquet de Roses',   cat:'nouveaute',      icon:'💐', desc:'Un bouquet qui en dit plus que les mots.',     price:450, img:'https://i.postimg.cc/nz45rcy1/rose-bou.jpg', badge:'NEW'},
-  {id:10,name:'Bouquet de Fleurs',  cat:'nouveaute',      icon:'🌸', desc:'Un bouquet coloré pour marquer les esprits.',  price:150, img:'https://i.postimg.cc/rsgPGZF4/telecharge.jpg', badge:'NEW'},
-  {id:11,name:'Rose éternelle',     cat:'nouveaute',      icon:'🌹', desc:'Elle ne fane jamais. Un cadeau pour toujours.',price:305, img:'https://i.postimg.cc/xTT7jQtB/63127-H-00-3P-HAUPTBILD-WS-3P-FR.jpg', badge:'💎'},
-  {id:12,name:'BMX 2 Places',       cat:'nouveaute',      icon:'🚲', desc:'Pour rider à deux dans les rues.',             price:500, img:'https://i.postimg.cc/fR1gv9DT/royal-factory.png', badge:'NEW'},
-  {id:13,name:'Doudou Pingouin',    cat:'nouveaute',      icon:'🐧', desc:'Un peu de douceur dans ce monde de brutes.',   price:600, img:'https://i.postimg.cc/Vvs7N9BX/telecharge-(1).jpg', badge:'NEW'},
-  {id:14,name:'Anneau',             cat:'nouveaute',      icon:'💍', desc:'Le symbole ultime, forgé pour durer.',          price:4500,img:'https://i.postimg.cc/TYw7M9PT/telecharge-(2).jpg', badge:'💎'},
-  {id:15,name:'Anneau de Mariage',  cat:'nouveaute',      icon:'💍', desc:'Pour sceller les liens les plus précieux.',     price:4000,img:'https://i.postimg.cc/Vs4GVTm4/telecharge-(3).jpg', badge:'💎'},
-  // QUINCAILLERIE
-  {id:16,name:'Pile Verte',         cat:'quincaillerie',  icon:'🔋', desc:'Petite pile, grande autonomie.',               price:3,   img:'https://i.postimg.cc/Lswd5T4R/image-2026-04-30-174330077.png', badge:''},
-  {id:17,name:'Outils',             cat:'quincaillerie',  icon:'🔧', desc:'Le kit de base indispensable.',                price:6,   img:'https://i.postimg.cc/vDR4b9jC/image-2026-04-30-172314805.png', badge:''},
-  {id:18,name:'Perceuse',           cat:'quincaillerie',  icon:'🪛', desc:'Compacte et efficace pour tous vos perçages.', price:10,  img:'https://i.postimg.cc/W47g89K6/image-2026-04-30-172145766.png', badge:''},
-  {id:19,name:'Grosse Perceuse',    cat:'quincaillerie',  icon:'🔩', desc:'Pour les gros travaux, elle ne lâche pas.',    price:14,  img:'https://i.postimg.cc/6q49fxNg/image-2026-04-30-222100571.png', badge:''},
-  {id:20,name:'Pince coupante',     cat:'quincaillerie',  icon:'✂️', desc:'Coupe fils et câbles avec précision.',         price:16,  img:'https://i.postimg.cc/DfRsk2mF/image-2026-04-30-222113181.png', badge:''},
-  {id:21,name:'Pince pour plaque',  cat:'quincaillerie',  icon:'🪝', desc:'Indispensable pour la pose de plaques.',       price:24,  img:'https://i.postimg.cc/qvxC3yw7/image-2026-04-30-222141464.png', badge:''},
-  {id:22,name:'Perceuse manuelle',  cat:'quincaillerie',  icon:'☯️', desc:'Simple, fiable, sans batterie à charger.',     price:14,  img:'https://i.postimg.cc/BQxjrHdT/image-2026-04-30-222250377.png', badge:''},
-  {id:23,name:'Foret de Perceuse',  cat:'quincaillerie',  icon:'🗜️', desc:'Perce dans le béton comme dans du beurre.',    price:800, img:'https://i.postimg.cc/6Q8rdwD7/foret.jpg', badge:'RARE'},
-  // ENTRETIEN
-  {id:24,name:'Bicarbonate',        cat:'entretien',      icon:'🧂', desc:'Le produit miracle pour nettoyer tout.',       price:2,   img:'https://i.postimg.cc/QMG9fxJS/bicarbonate-de-soude-pajo-x-1-kg.png', badge:''},
-  {id:25,name:'Caoutchouc',         cat:'entretien',      icon:'⚫', desc:'Polyvalent et durable.',                       price:5,   img:'https://i.postimg.cc/SRBkmjsB/caoutch.jpg', badge:''},
-  {id:26,name:'Huile',              cat:'entretien',      icon:'🫙', desc:'Lubrifie et protège vos mécaniques.',          price:8,   img:'https://i.postimg.cc/h4y0pTzM/HUILE-LUBRIFIANT-HOME-SITE-INTERNET-3-870x500-1.jpg', badge:''},
-  {id:27,name:'Huile Noire',        cat:'entretien',      icon:'🛢️', desc:'Haute viscosité pour les moteurs exigeants.',  price:16,  img:'https://i.postimg.cc/kgrp9zNQ/0a3cf9d1-a892-4403-a3f6-75f32dfdb1d4.png', badge:''},
-  {id:28,name:'Huile Jaune',        cat:'entretien',      icon:'💛', desc:'Qualité premium pour une protection maximale.',price:12,  img:'https://i.postimg.cc/N0wyNzsJ/image-2026-05-25-201103260.png', badge:''},
-  {id:29,name:'Batterie de voiture',cat:'entretien',      icon:'🔌', desc:'Recharge rapide, longue durée de vie.',        price:20,  img:'https://i.postimg.cc/ZnsFnBym/4a9ab44b-e423-4527-b016-d241c9ee246f.png', badge:'TOP'},
-  {id:30,name:"Kit de Nettoyage",cat:"entretien",icon:"🧹",desc:"Tout le nécessaire pour un véhicule impeccable.",price:80,img:"https://i.postimg.cc/9Mpsxpsg/81TWN3Gp-Ur-L-AC-SY300-SX300-QL70-ML2.jpg",badge:""},
-  {id:31,name:'Batterie',           cat:'entretien',      icon:'🔋', desc:'Petite batterie, fiable et rechargeable.',     price:10,  img:'https://i.postimg.cc/VN5w02TN/caef57df-3628-4717-8492-403be62c627b.png', badge:''},
-  // PAPETERIE
-  {id:32,name:'Colle',              cat:'papeterie',      icon:'🧴', desc:'Colle forte, sèche vite, tient longtemps.',    price:3,   img:'https://i.postimg.cc/282fYL6y/image-2026-05-01-173941868.png', badge:''},
-  {id:33,name:'Sachet vide',        cat:'papeterie',      icon:'🛍️', desc:'Pour conditionner et transporter discrètement.',price:6,  img:'https://i.postimg.cc/HLznDhbr/image-2026-05-01-170816343.png', badge:''},
-  {id:34,name:'Encre',              cat:'papeterie',      icon:'🖊️', desc:'Noire et intense, pour une impression parfaite.',price:6, img:'https://i.postimg.cc/pV59px8H/image-2026-05-01-173651354.png', badge:''},
-  {id:35,name:'Porte Document',     cat:'papeterie',      icon:'📁', desc:'Garde vos papiers importants en sécurité.',    price:10,  img:'https://i.postimg.cc/PJgrQsnR/image-2026-05-01-170839737.png', badge:''},
-  {id:36,name:'Porte Feuille',      cat:'papeterie',      icon:'👛', desc:'Slim et solide, pour vos essentiels.',          price:10,  img:'https://i.postimg.cc/MpSfC4nR/image-2026-05-01-173612238.png', badge:''},
-  {id:37,name:'Trousseau de clés',  cat:'papeterie',      icon:'🔑', desc:'Organisez vos clés avec style.',               price:100, img:'https://i.postimg.cc/jjygsBXM/image-2026-05-01-174207296.png', badge:''},
-  // QUOTIDIEN
-  {id:38,name:'Papier à rouler',    cat:'quotidien',      icon:'📜', desc:"Pour les amateurs de l\'authentique.",         price:2,   img:'https://i.postimg.cc/XJWJT0ZN/image-2026-05-01-165904327.png', badge:''},
-  {id:39,name:'Carte SIM',          cat:'quotidien',      icon:'📱', desc:'Connexion instantanée, partout dans la ville.',price:10,  img:'https://i.postimg.cc/RVxBdTHx/image-2026-05-01-170231784.png', badge:''},
-  {id:40,name:'Appât',              cat:'quotidien',      icon:'🪱', desc:"L'appât parfait pour ferrer du gros.",         price:8,   img:'https://i.postimg.cc/6p9NJ5cV/image-2026-05-01-170243446.png', badge:''},
-  {id:41,name:'Élastique',          cat:'quotidien',      icon:'🪢', desc:'Toujours utile, toujours là.',                  price:20,  img:'https://i.postimg.cc/Z5VzTtD9/image-2026-05-01-170253539.png', badge:''},
-  {id:42,name:'Ticket à gratter',   cat:'quotidien',      icon:'🎫', desc:'Tente ta chance, tu sais jamais.',             price:30,  img:'https://i.postimg.cc/mD1vNcZr/image-2026-05-01-170308340.png', badge:''},
-  {id:43,name:'Post it',            cat:'quotidien',      icon:'📌', desc:'Note tout, oublie rien.',                       price:50,  img:'https://i.postimg.cc/KjnCwdMb/image-2026-05-01-170319398.png', badge:''},
-  {id:44,name:'Carte SD',           cat:'quotidien',      icon:'💾', desc:'Stocke plus, efface moins.',                   price:40,  img:'https://i.postimg.cc/yYywPCK3/image-2026-05-01-170331082.png', badge:''},
-  {id:45,name:'Ballon de Football', cat:'quotidien',      icon:'⚽', desc:'Pour les matchs qui comptent vraiment.',       price:50,  img:'https://i.postimg.cc/W1pxYYbR/image-2026-05-01-170342020.png', badge:''},
-  {id:46,name:'Ballon de Basket',   cat:'quotidien',      icon:'🏀', desc:'Rebond parfait, prise en main irréprochable.', price:50,  img:'https://i.postimg.cc/s2q8XVPQ/image-2026-05-01-170358694.png', badge:''},
-  {id:47,name:'Canne à pêche',      cat:'quotidien',      icon:'🎣', desc:'Légère et solide pour des heures au bord.',    price:64,  img:'https://i.postimg.cc/ZKHMNPP6/image-2026-05-01-170429276.png', badge:''},
-  {id:48,name:'Skate',              cat:'quotidien',      icon:'🛹', desc:'Quatre roues pour conquérir les rues.',         price:100, img:'https://i.postimg.cc/wByfnSCh/image-2026-05-01-170443609.png', badge:''},
-  {id:49,name:'Téléphone Basique',  cat:'quotidien',      icon:'📞', desc:'Simple, solide, ça appelle et ça tient.',      price:120, img:'https://i.postimg.cc/BnTQ2nZz/image-2026-05-01-173510078.png', badge:''},
-  {id:50,name:'Palette de maquillage',cat:'quotidien',    icon:'💄', desc:'Toutes les couleurs pour se réinventer.',       price:165, img:'https://i.postimg.cc/nh6Y9MWS/image-2026-05-01-170533247.png', badge:''},
-  {id:51,name:'BMX',                cat:'quotidien',      icon:'🚲', desc:'Pour rider dans les rues sans se faire remarquer.',price:300,img:'https://i.postimg.cc/fy2YzbX3/image-2026-05-01-170545538.png', badge:'🔥'},
-  {id:52,name:'Téléphone',          cat:'quotidien',      icon:'📱', desc:'Puissant, rapide, toujours connecté.',         price:250, img:'https://i.postimg.cc/FzRJBQqk/image-2026-05-01-170637830.png', badge:''},
-  {id:53,name:'Doudou',             cat:'quotidien',      icon:'🧸', desc:'Un peu de douceur dans ce monde de brutes.',   price:600, img:'https://i.postimg.cc/ZKgywnS0/image-2026-05-01-173300004.png', badge:''},
-  {id:54,name:'Appareil Photo',     cat:'quotidien',      icon:'📷', desc:'Capture chaque moment comme un pro.',          price:700, img:'https://i.postimg.cc/1tRg8QyM/image-2026-05-01-170712197.png', badge:''},
-  {id:55,name:'Galaxy',             cat:'quotidien',      icon:'📱', desc:'Le flagship pour ceux qui veulent le meilleur.',price:870,img:'https://i.postimg.cc/x8ccP3J1/image-2026-05-01-170730475.png', badge:'TOP'},
-  {id:56,name:'Tablette',           cat:'quotidien',      icon:'📲', desc:'Grand écran, grande puissance.',               price:1260,img:'https://i.postimg.cc/0jFrXKDY/image-2026-05-01-170737827.png', badge:''},
-  {id:57,name:'Éponge',             cat:'quotidien',      icon:'🧽', desc:'Spéciale tags, absorption totale.',             price:1400,img:'https://i.postimg.cc/66m7pggh/image-2026-05-01-170750796.png', badge:'RARE'},
-  {id:58,name:'Spray Tag',          cat:'quotidien',      icon:'🎨', desc:'La couleur qui marque les esprits et les murs.',price:2500,img:'https://i.postimg.cc/nLprWJjN/image-2026-05-01-170807147.png', badge:'💎 RARE'},
-  // ALIMENTAIRE
-  {id:59,name:'Café',               cat:'alimentaire',    icon:'☕', desc:'Chaud, fort, prêt à te lancer dans la journée.',price:30, img:'https://i.postimg.cc/T33NKtM7/image-2026-05-25-200642532.png', badge:''},
-  {id:60,name:'Crème glacée',       cat:'alimentaire',    icon:'🍦', desc:'Fraîche et crémeuse, parfaite.',               price:2,   img:'https://i.postimg.cc/JhV9DxZj/image-2026-05-01-072013256.png', badge:''},
-  {id:61,name:'Pot Crème glacée',   cat:'alimentaire',    icon:'🍨', desc:'Le grand format pour partager ou pas.',        price:2,   img:'https://i.postimg.cc/CLRtcX4B/image-2026-05-01-072049084.png', badge:''},
-  {id:62,name:'Crème Fraîche',      cat:'alimentaire',    icon:'🥛', desc:'Onctueuse et naturelle, elle relève tout.',    price:2,   img:'https://i.postimg.cc/d0w5cxGz/image-2026-05-01-072303805.png', badge:''},
-  {id:63,name:'Cola',               cat:'alimentaire',    icon:'🥤', desc:'La classique qui désaltère comme il faut.',    price:4,   img:'https://i.postimg.cc/1R8hd8mX/image-2026-05-01-072320710.png', badge:''},
-  {id:64,name:'Moutarde',           cat:'alimentaire',    icon:'🌭', desc:'Du piquant pour ceux qui savent.',             price:2,   img:'https://i.postimg.cc/2jbMwgG6/image-2026-05-01-072519206.png', badge:''},
-  {id:65,name:'Coquille à tacos',   cat:'alimentaire',    icon:'🌮', desc:'Croustillante à souhait pour vos tacos.',      price:2,   img:'https://i.postimg.cc/8CznrYsc/image-2026-05-01-072610280.png', badge:''},
-  {id:66,name:'Tortilla',           cat:'alimentaire',    icon:'🫓', desc:'Souple et généreuse, elle enroule tout.',      price:2,   img:'https://i.postimg.cc/gj8MWFtT/image-2026-05-01-072648240.png', badge:''},
-  {id:67,name:'Bouteille eau',      cat:'alimentaire',    icon:'💧', desc:'Hydratation pure, indispensable.',             price:10,  img:'https://i.postimg.cc/Hs0Svmyb/image-2026-05-01-072720496.png', badge:''},
-  {id:68,name:'Bonbon cola',        cat:'alimentaire',    icon:'🍬', desc:'Le goût cola en version pocket.',              price:8,   img:'https://i.postimg.cc/BQfX9426/image-2026-05-01-154350220.png', badge:''},
-  {id:69,name:'Bonbon tada',        cat:'alimentaire',    icon:'🍭', desc:'Une surprise à chaque bouchée.',               price:8,   img:'https://i.postimg.cc/pdrdYTMr/image-2026-05-01-154412787.png', badge:''},
-  {id:70,name:'Bonbon Drag',        cat:'alimentaire',    icon:'🍬', desc:'Petits mais intenses.',                         price:8,   img:'https://i.postimg.cc/0N4yts8R/image-2026-05-01-154425241.png', badge:''},
-  {id:71,name:'Bonbon',             cat:'alimentaire',    icon:'🍬', desc:'Le classique qui fait toujours plaisir.',      price:8,   img:'https://i.postimg.cc/9F2Fg1jD/image-2026-05-01-154444634.png', badge:''},
-  {id:72,name:'Barre choco caramel',cat:'alimentaire',    icon:'🍫', desc:'Chocolat et caramel, le combo gagnant.',       price:18,  img:'https://i.postimg.cc/wxX9NJRF/image-2026-05-01-154516834.png', badge:''},
-  {id:73,name:'Barre chocolatée',   cat:'alimentaire',    icon:'🍫', desc:"L'énergie du chocolat quand il le faut.",     price:18,  img:'https://i.postimg.cc/XYJWtz1v/image-2026-05-01-154543045.png', badge:''},
-  {id:74,name:'Baguette',           cat:'alimentaire',    icon:'🥖', desc:'Fraîche du jour, croustillante.',              price:20,  img:'https://i.postimg.cc/cHqNg4s9/image-2026-05-01-154558977.png', badge:''},
-  {id:75,name:'Pistache',           cat:'alimentaire',    icon:'🌰', desc:'Salées et grillées, impossibles à arrêter.',   price:8,   img:'https://i.postimg.cc/wMg82fsp/image-2026-05-01-154612989.png', badge:''},
-  {id:76,name:'Noix cajou',         cat:'alimentaire',    icon:'🥜', desc:'Douces et croquantes, le snack parfait.',      price:8,   img:'https://i.postimg.cc/Mpvk9jXf/image-2026-05-01-154636824.png', badge:''},
-  {id:77,name:'Brique citron',      cat:'alimentaire',    icon:'🍋', desc:"L'acidité qui réveille, format pratique.",    price:16,  img:'https://i.postimg.cc/XJ6TNHLX/image-2026-05-01-154650676.png', badge:''},
-  {id:78,name:'Noix',               cat:'alimentaire',    icon:'🌰', desc:'Naturelles et nourrissantes.',                 price:8,   img:'https://i.postimg.cc/vHZCm6rx/image-2026-05-01-154709389.png', badge:''},
-  {id:79,name:'Mini menu',          cat:'alimentaire',    icon:'🍱', desc:'Un petit creux ? Le mini menu règle ça.',      price:40,  img:'https://i.postimg.cc/MTVdC4Vj/image-2026-05-25-200708257.png', badge:''},
-  {id:80,name:'Menu découverte',    cat:'alimentaire',    icon:'🍽️', desc:'Un repas complet pour découvrir nos spécialités.',price:90,img:'https://i.postimg.cc/Hkj72HMh/image-2026-05-01-165749911.png', badge:''},
-  {id:81,name:'Menu festin',        cat:'alimentaire',    icon:'🎉', desc:'Le grand menu pour les grandes occasions.',    price:120, img:'https://i.postimg.cc/MTJMqQFN/image-2026-05-01-165812720.png', badge:'🔥'},
-  {id:82,name:'Hérisson',           cat:'alimentaire',    icon:'🦔', desc:'Petit prix, grand goût.',                      price:2,   img:'https://i.postimg.cc/VNSwDszn/image-2026-05-01-173911638.png', badge:''},
-  // POWER
-  {id:83,name:'Pancakes Protéines', cat:'power',          icon:'🥞', desc:'Le petit déj des champions.',                  price:14,  img:'https://i.postimg.cc/85nxZ1Cb/pancakes-prote-ine-s-a-la-whey-sans-sucre.jpg', badge:''},
-  {id:84,name:'Whey fraise',        cat:'power',          icon:'🍓', desc:'Saveur fraise intense pour la récup.',         price:8,   img:'https://i.postimg.cc/L8g1Qv8J/c55c00ee-c4bf-4de7-bc9b-8fe4fae0c7a9.png', badge:''},
-  {id:85,name:'Whey zero',          cat:'power',          icon:'⚡', desc:'Zéro sucre, 100% performance.',                price:8,   img:'https://i.postimg.cc/yYbRT2s4/91c840cc-9abe-45e6-9829-ef43cbee3ad7.png', badge:''},
-  {id:86,name:'Protéine Muscle2000',cat:'power',          icon:'💪', desc:'La formule pro pour des gains sérieux.',       price:20,  img:'https://i.postimg.cc/sDXS73Fv/29a45aae-1253-43c9-a804-5210bdcce367.png', badge:'TOP'},
-  {id:87,name:'Pure Whey',          cat:'power',          icon:'🥛', desc:'Protéine pure, sans compromis.',               price:4,   img:'https://i.postimg.cc/BbZFh0jW/c33e33cd-929c-40a6-b463-57a29d72e666.png', badge:''},
-  {id:88,name:'Whey Gold',          cat:'power',          icon:'🥇', desc:'Le gold standard de la whey.',                 price:10,  img:'https://i.postimg.cc/Zq36nHGD/edbbcaba-2594-4d1d-93a8-068b17f8d08a.png', badge:'💎'},
-  {id:89,name:'Barre énergétique',  cat:'power',          icon:'🍫', desc:"L'énergie instantanée pour tenir la distance.",price:4,  img:'https://i.postimg.cc/wj1X8g0x/ffd18f1e-0701-4c8f-8901-00f8b3d410b8.png', badge:''},
-  {id:90,name:'Protéine Energy',    cat:'power',          icon:'⚡', desc:"Protéines + boost d\'énergie.",                price:4,   img:'https://i.postimg.cc/02WYBbGB/daedbc28-7d2b-4a32-9066-06929d60e114.png', badge:''},
-  {id:91,name:'Boisson énergétique',cat:'power',          icon:'🥤', desc:"Recharge rapide avant l\'effort.",             price:4,   img:'https://i.postimg.cc/4NNvPzcV/d74c56de-73f5-4dc6-95cb-034b61df7362.png', badge:''},
-  {id:92,name:'Milkshake protéine', cat:'power',          icon:'🥤', desc:'Onctueux, savoureux et blindé de protéines.',  price:4,   img:'https://i.postimg.cc/5NddF2Fb/35788710-ad50-4945-b6d6-71b446e9811d.png', badge:''},
-  // CBD
-  {id:93,name:'Sucette CBD',        cat:'cbd',            icon:'🍭', desc:'Douce, fruitée, et relaxante.',                price:16,  img:'https://i.postimg.cc/nc7P8XKB/image-2026-05-25-195508059.png', badge:''},
-  {id:94,name:'Cookie CBD',         cat:'cbd',            icon:'🍪', desc:'Croustillant à souhait, avec la touche CBD.',  price:20,  img:'https://i.postimg.cc/k5M1tw0Z/image-2026-05-25-195539417.png', badge:''},
-  {id:95,name:'Chillma',            cat:'cbd',            icon:'😌', desc:'Le produit détente par excellence.',            price:20,  img:'https://i.postimg.cc/HxRBRmVP/image-2026-05-25-195602202.png', badge:''},
-  {id:96,name:'Joint de CBD',       cat:'cbd',            icon:'🌿', desc:'100% CBD, roulé proprement.',                  price:20,  img:'https://i.postimg.cc/vBZ5zNXw/image-2026-05-25-202116941.png', badge:''},
-];
+  const p=[
+    {id:1,name:"Pile Verte",    icon:"🔋",desc:"Pile alcaline standard",          price:3,   cat:"quincaillerie",img:"",badge:""},
+    {id:2,name:"Outils",        icon:"🔧",desc:"Kit d'outils basique",             price:5,   cat:"quincaillerie",img:"",badge:""},
+    {id:3,name:"Perceuse",      icon:"🪛",desc:"Perceuse électrique légère",       price:10,  cat:"quincaillerie",img:"",badge:""},
+    {id:4,name:"Grosse Perceuse",icon:"🔩",desc:"Perceuse industrielle",           price:12,  cat:"quincaillerie",img:"",badge:""},
+    {id:5,name:"Pince Coupante",icon:"✂️",desc:"Pince coupante renforcée",         price:16,  cat:"quincaillerie",img:"",badge:""},
+    {id:6,name:"Pince Plaque",  icon:"🪝",desc:"Pince pour plaques spéciales",     price:23,  cat:"quincaillerie",img:"",badge:""},
+    {id:7,name:"Perceuse Manuel",icon:"☯️",desc:"Perceuse à main mécanique",       price:12,  cat:"quincaillerie",img:"",badge:""},
+    {id:8,name:"Foret Perceuse",icon:"🗜️",desc:"Foret professionnel extra dur",    price:650, cat:"quincaillerie",img:"",badge:"RARE"},
+    {id:9,name:"Papier Rouler", icon:"📜",desc:"Feuilles fines, pack x10",         price:2,   cat:"quotidien",    img:"",badge:""},
+    {id:10,name:"Canne à Pêche",icon:"🎣",desc:"Canne à pêche robuste",            price:60,  cat:"quotidien",    img:"",badge:""},
+    {id:11,name:"Appât",        icon:"🪱",desc:"Boite d'appâts frais",             price:10,  cat:"quotidien",    img:"",badge:""},
+    {id:12,name:"Élastique",    icon:"🪢",desc:"Lot d'élastiques résistants",      price:20,  cat:"quotidien",    img:"",badge:""},
+    {id:13,name:"Ticket Gratter",icon:"🎫",desc:"Lot de 5 tickets",                price:25,  cat:"quotidien",    img:"",badge:""},
+    {id:14,name:"Post It",      icon:"📌",desc:"Bloc 50 post-its colorés",         price:50,  cat:"quotidien",    img:"",badge:""},
+    {id:15,name:"Ballon Football",icon:"⚽",desc:"Ballon taille 5",                price:50,  cat:"quotidien",    img:"",badge:""},
+    {id:16,name:"Ballon Basket",icon:"🏀",desc:"Ballon NBA",                       price:50,  cat:"quotidien",    img:"",badge:""},
+    {id:17,name:"BMX",          icon:"🚲",desc:"BMX de rue performant",            price:200, cat:"quotidien",    img:"",badge:"🔥"},
+    {id:18,name:"Bicarbonate",  icon:"🧂",desc:"Sachet multiusage",                price:2,   cat:"entretien",    img:"",badge:""},
+    {id:19,name:"Huile",        icon:"🫙",desc:"Huile végétale 1L",                price:8,   cat:"entretien",    img:"",badge:""},
+    {id:20,name:"Huile Noire",  icon:"🛢️",desc:"Huile moteur noire épaisse",       price:16,  cat:"entretien",    img:"",badge:""},
+    {id:21,name:"Huile Shell",  icon:"⚡",desc:"Huile Shell premium",              price:12,  cat:"entretien",    img:"",badge:""},
+    {id:22,name:"Batterie Voiture",icon:"🔌",desc:"Batterie 12V haute capacité",   price:20,  cat:"entretien",    img:"",badge:"TOP"},
+    {id:23,name:"Batterie",     icon:"🔋",desc:"Batterie portable",               price:10,  cat:"entretien",    img:"",badge:""},
+    {id:24,name:"Colle",        icon:"🧴",desc:"Colle forte polyvalente",          price:3,   cat:"papeterie",    img:"",badge:""},
+    {id:25,name:"Sachet Vide",  icon:"🛍️",desc:"Sachet grand format",             price:5,   cat:"papeterie",    img:"",badge:""},
+    {id:26,name:"Encre",        icon:"🖊️",desc:"Flacon d'encre 50ml",             price:6,   cat:"papeterie",    img:"",badge:""},
+    {id:27,name:"Porte Document",icon:"📁",desc:"Porte-document rigide A4",        price:10,  cat:"papeterie",    img:"",badge:""},
+    {id:28,name:"Porte Feuille",icon:"👛",desc:"Portefeuille cuir",               price:10,  cat:"papeterie",    img:"",badge:""},
+    {id:29,name:"Trousseau Clés",icon:"🔑",desc:"Trousseau multi-crochets",        price:90,  cat:"papeterie",    img:"",badge:""},
+    {id:30,name:"Spray Tag",    icon:"🎨",desc:"Bombe de peinture graffiti",       price:1900,cat:"papeterie",    img:"",badge:"💎 RARE"},
+    {id:31,name:"Éponge",       icon:"🧽",desc:"Éponge absorbante",               price:1100,cat:"papeterie",    img:"",badge:"RARE"},
+    {id:32,name:"Fertilisant",  icon:"💊",desc:"Fertilisant organique",           price:10,  cat:"jardinage",    img:"",badge:""},
+    {id:33,name:"Pot de Fleur", icon:"🪴",desc:"Pot en céramique",                price:10,  cat:"jardinage",    img:"",badge:""},
+    {id:34,name:"Table",        icon:"🪑",desc:"Table de jardin pliante",          price:10,  cat:"jardinage",    img:"",badge:""},
+    {id:35,name:"Terre",        icon:"🌱",desc:"Sac de terreau 10L",               price:12,  cat:"jardinage",    img:"",badge:""},
+    {id:36,name:"Bac Jardinage",icon:"🌿",desc:"Bac de culture en bois",           price:18,  cat:"jardinage",    img:"",badge:""},
+    {id:37,name:"Lumière Violette",icon:"💡",desc:"Lampe UV horticulture",         price:36,  cat:"jardinage",    img:"",badge:"💎"},
+  ];
+  // Mots de passe hashés SHA-256 (Web Crypto) — jamais en clair
+  const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+  const hEnt   = 'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644';
+  const hCli   = '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
   return {
-    theme: 'dark',
-    adminPassHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
+    adminPassHash: hAdmin,
+    // Webhook : stocké uniquement dans localStorage, jamais dans le code source déployé
     webhook: '',
-    orderCount: 0,
-    products: PRODS,
+    orderCount: 247,
+    products: p,
     gallery: [],
     orders: [],
     catalogues:[
-      {id:'default',name:'Standard',    items:PRODS.map(x=>({'id':x.id,'enabled':true,'cp':null})) },
-      {id:'ent',    name:'Entreprise',  items:PRODS.map(x=>({'id':x.id,'enabled':true,'cp':Math.round(x.price*.7)})) },
+      {id:'default',name:'Standard',   items:p.map(x=>({id:x.id,enabled:true,cp:null}))},
+      {id:'ent',    name:'Entreprise',items:p.map(x=>({id:x.id,enabled:true,cp:Math.round(x.price*.7)}))},
     ],
     users:[
-      {id:1,username:'admin',      passHash:'240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', rank:'admin',      rpName:'Admin',        catId:'default'},
-      {id:3,username:'entreprise1',passHash:'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644',   rank:'entreprise', rpName:'Entreprise 1', catId:'ent'},
-      {id:4,username:'client1',    passHash:'186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c',   rank:'client',     rpName:'John Doe',     catId:'default'},
+      {id:1,username:'admin',      passHash:hAdmin, rank:'admin',      rpName:'Admin',        catId:'default'},
+      {id:3,username:'entreprise1',passHash:hEnt,   rank:'entreprise', rpName:'Entreprise 1', catId:'ent'},
+      {id:4,username:'client1',    passHash:hCli,   rank:'client',     rpName:'John Doe',     catId:'default'},
     ],
     team:[
       {id:1,name:"Flash", grade:"CEO",      sub:"Fondateur du LTD",          init:"F",img:""},
       {id:2,name:"Marco", grade:"MANAGER",  sub:"Responsable des stocks",    init:"M",img:""},
       {id:3,name:"Sofia", grade:"STAFF",    sub:"Accueil & service client",  init:"S",img:""},
       {id:4,name:"Tony",  grade:"DELIVERY", sub:"Livraisons express",        init:"T",img:""},
+      {id:5,name:"Lisa",  grade:"FINANCE",  sub:"Gestion financière",        init:"L",img:""},
+      {id:6,name:"Recon", grade:"SECURITY", sub:"Protection du commerce",    init:"R",img:""},
     ],
     partners:[
-      {id:1,name:"Fleeca Bank",     icon:"🏦",desc:"Partenaire bancaire officiel",img:""},
-      {id:2,name:"Rockford Garage", icon:"🔧",desc:"Entretien de la flotte",      img:""},
+      {id:1,name:"Fleeca Bank",     icon:"🏦",desc:"Partenaire bancaire officiel",           img:""},
+      {id:2,name:"Maze Bank",       icon:"🏛",desc:"Gestion des comptes entreprise",         img:""},
+      {id:3,name:"Rockford Garage", icon:"🔧",desc:"Entretien de la flotte de livraison",    img:""},
+      {id:4,name:"LS Medical",      icon:"🏥",desc:"Couverture santé des employés",          img:""},
+      {id:5,name:"Radio LS",        icon:"📻",desc:"Publicité radio & sponsoring",            img:""},
+      {id:6,name:"Night Owl",       icon:"🦉",desc:"Partenaire bars & boissons",             img:""},
+      {id:7,name:"Horny's",         icon:"🍔",desc:"Partenaire restauration officiel",       img:""},
     ],
     reviews:[],
-    promos:[
-      {icon:'🆕', label:'Nouveautés', title:'Nouveautés', sub:'Roses, anneaux, BMX 2 places...', color:'#4a1a2a', cat:'nouveaute'},
-      {icon:'🍎', label:'Arrivages frais', title:'Alimentaire', sub:'Menus, bonbons, boissons', color:'#1a3a1a', cat:'alimentaire'},
-      {icon:'💪', label:'Zone sportive', title:'Power & CBD', sub:'Whey, barres, CBD', color:'#1a1a3a', cat:'power'},
-    ],
   };
 }
 
-// ══════════════════════════════════════════════
-//  STATE & VARIABLES GLOBALES
-// ══════════════════════════════════════════════
-const ALLOWED = ['entreprise','admin','staff'];
-
-let DB = (()=>{
+let DB=(()=>{
   try{
-    const r = localStorage.getItem(DB_KEY);
-    if(!r) return defaultDB();
-    const saved = JSON.parse(r);
-    const def = defaultDB();
+    const r=localStorage.getItem(DB_KEY);
+    if(!r)return defaultDB();
+    const saved=JSON.parse(r);
+    const def=defaultDB();
     return {
-      theme:         saved.theme         ?? def.theme,
-      adminPassHash: saved.adminPassHash ?? def.adminPassHash,
-      webhook:       saved.webhook       ?? '',
-      orderCount:    saved.orderCount    ?? def.orderCount,
-      products:      (saved.products&&saved.products.length)     ? saved.products    : def.products,
-      catalogues:    (saved.catalogues&&saved.catalogues.length) ? saved.catalogues  : def.catalogues,
-      users:         (saved.users&&saved.users.length)           ? saved.users       : def.users,
-      team:          (saved.team&&saved.team.length)             ? saved.team        : def.team,
-      partners:      (saved.partners&&saved.partners.length)     ? saved.partners    : def.partners,
-      gallery:       saved.gallery  ?? [],
-      orders:        saved.orders   ?? [],
-      reviews:       saved.reviews  ?? [],
-      promos:        saved.promos   ?? def.promos,
+      adminPassHash: saved.adminPassHash  ?? def.adminPassHash,
+      webhook:       saved.webhook        ?? '',
+      orderCount:    saved.orderCount     ?? def.orderCount,
+      gallery:       saved.gallery        ?? [],
+      orders:        saved.orders         ?? [],
+      products:      (saved.products&&saved.products.length)    ? saved.products    : def.products,
+      catalogues:    (saved.catalogues&&saved.catalogues.length)? saved.catalogues  : def.catalogues,
+      users:         (saved.users&&saved.users.length)          ? saved.users       : def.users,
+      team:          (saved.team&&saved.team.length)            ? saved.team        : def.team,
+      partners:      (saved.partners&&saved.partners.length)    ? saved.partners    : def.partners,
+      reviews:       saved.reviews ?? [],
     };
-  }catch(e){ return defaultDB(); }
+  }catch(e){return defaultDB();}
 })();
 
-let CU = null;
-let cart = {};
-let revR = 0;
-let cmdCatTab = null;
-let adminCECat = 'jardinage';
-let eProd = null, eUser = null, eTeam = null, ePart = null, eGal = null, lbIdx = 0;
-// saveDB → remplacée par version Firebase async
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(DB));}
+function nid(a){return a.length?Math.max(...a.map(x=>x.id||0))+1:1;}
 
-function canOrder(u){return u&&ALLOWED.includes(u.rank);}
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let CU=null, cart={}, revR=0, cmdCatTab=null, adminCECat='quincaillerie';
+let eProd=null, eUser=null, eTeam=null, ePart=null, eGal=null, lbIdx=0;
 
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  refreshHomeStats(true);
+  buildTicker();
+  initObs();
+  goPage('home');
+});
+
+// ══════════════════════════════════════════════
+//  TICKER
+// ══════════════════════════════════════════════
+function buildTicker(){
+  const items=[
+    ...DB.products.slice(0,10).map(p=>`<span class="ti"><span>${p.icon} ${p.name}</span> — $${p.price}</span>`),
+    `<span class="ti y">✦ <span>LTD Grove Street</span> — Toujours carré</span>`,
+    `<span class="ti p">💎 <span>Accès Entreprise</span> — Commander en ligne</span>`,
+    ...DB.products.slice(10,20).map(p=>`<span class="ti"><span>${p.icon} ${p.name}</span> — $${p.price}</span>`),
+    `<span class="ti y">📦 <span>${DB.products.length} produits</span> disponibles</span>`,
+  ];
+  const h=items.join('')+items.join('');
+  document.getElementById('ticker-track').innerHTML=h;
+}
 
 // ══════════════════════════════════════════════
 //  NAVIGATION
 // ══════════════════════════════════════════════
 function goPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
   const pg=document.getElementById('page-'+id); if(!pg)return;
   pg.classList.add('active');
-  const tab=document.querySelector(`.ctab[data-page="${id}"]`);
+  const tab=document.querySelector(`.ntab[data-page="${id}"]`);
   if(tab)tab.classList.add('active');
   window.scrollTo(0,0);
   if(id==='commander') renderCommander();
@@ -1101,8 +991,14 @@ function goPage(id){
   if(id==='reviews')   renderReviews();
   if(id==='settings'){ if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;} renderSettings(); }
   if(id==='admin'){    if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;} renderAdmin(); }
-  if(id==='home')      renderHomeGrid();
+  setTimeout(initObs,80);
 }
+
+// ══════════════════════════════════════════════
+//  AUTH — Mots de passe hashés
+// ══════════════════════════════════════════════
+const ALLOWED=['entreprise','admin','staff'];
+function canOrder(u){return u&&ALLOWED.includes(u.rank);}
 
 function openLogin(){openOv('login-ov');setTimeout(()=>document.getElementById('l-user').focus(),120);}
 
@@ -1137,53 +1033,55 @@ function onLogin(){
   document.getElementById('l-pass').value='';
   updateNavUser();
   if(CU.rank==='admin'){
-    document.getElementById('ctab-admin').style.display='';
-    document.getElementById('ctab-settings').style.display='';
+    document.getElementById('ntab-admin').style.display='';
+    document.getElementById('ntab-settings').style.display='';
   }
   ntf('Bienvenue '+CU.rpName+' !');
   if(document.getElementById('page-commander').classList.contains('active'))renderCommander();
 }
 function logout(){
   CU=null;cart={};updCart();updateNavUser();
-  document.getElementById('ctab-admin').style.display='none';
-  document.getElementById('ctab-settings').style.display='none';
+  document.getElementById('ntab-admin').style.display='none';
+  document.getElementById('ntab-settings').style.display='none';
   goPage('home');ntf('Déconnecté');
 }
 function updateNavUser(){
-  const nr=document.getElementById('header-actions');
-  if(!CU){nr.innerHTML=`<button class="btn-login" onclick="openLogin()">Se connecter</button>`;return;}
-  nr.innerHTML=`<div class="user-chip"><div class="user-av">${CU.rpName[0].toUpperCase()}</div><div><div class="user-name">${CU.rpName}</div></div><span class="rank-pill rp-${CU.rank}">${CU.rank.toUpperCase()}</span><button class="btn-logout" onclick="logout()">Déco</button></div>`;
+  const nr=document.getElementById('nav-right');
+  if(!CU){nr.innerHTML=`<button class="nav-login-btn" onclick="openLogin()">Se connecter</button>`;return;}
+  const rc={admin:'rb-admin',vip:'rb-vip',entreprise:'rb-entreprise',staff:'rb-staff',client:'rb-client'};
+  nr.innerHTML=`<div class="nav-logo-dot"></div><span class="nav-uname">${CU.rpName}</span><span class="rank-badge ${rc[CU.rank]||'rb-client'}">${CU.rank.toUpperCase()}</span><button class="nav-logout" onclick="logout()">Déco</button>`;
 }
 
 // ══════════════════════════════════════════════
 //  COMMANDER
 // ══════════════════════════════════════════════
 function renderCommander(){
-  const locked=document.getElementById('cmd-locked-wrap');
+  const locked=document.getElementById('cmd-locked');
   const active=document.getElementById('cmd-active');
   if(!CU){
-    locked.style.display='flex';active.style.display='none';
+    locked.style.display='flex';active.classList.remove('show');
     document.getElementById('cmd-locked-icon').textContent='🔒';
     document.getElementById('cmd-locked-title').textContent='Accès Restreint';
-    document.getElementById('cmd-locked-msg').innerHTML='Cet espace est réservé aux membres <strong>Entreprise</strong>. Connectez-vous avec un compte autorisé.';
-    document.getElementById('cmd-locked-btns').innerHTML='<button class="btn-primary" onclick="openLogin()">Se connecter</button>';
+    document.getElementById('cmd-locked-title').className='purple';
+    document.getElementById('cmd-locked-msg').innerHTML='Cet espace est réservé aux membres <strong>Entreprise</strong>.<br>Connectez-vous avec un compte autorisé.';
+    document.getElementById('cmd-locked-actions').innerHTML='<button class="btn-g" onclick="openLogin()">Se connecter</button>';
     return;
   }
   if(!canOrder(CU)){
-    locked.style.display='flex';active.style.display='none';
+    locked.style.display='flex';active.classList.remove('show');
     document.getElementById('cmd-locked-icon').textContent='🚫';
     document.getElementById('cmd-locked-title').textContent='Accès non autorisé';
-    document.getElementById('cmd-locked-msg').innerHTML=`Votre compte <em>${CU.rank.toUpperCase()}</em> ne peut pas commander ici. Seuls les membres <strong>Entreprise</strong> y ont accès.`;
-    document.getElementById('cmd-locked-btns').innerHTML='<button class="btn-secondary" onclick="logout()">Changer de compte</button>';
+    document.getElementById('cmd-locked-title').className='green';
+    document.getElementById('cmd-locked-msg').innerHTML=`Bonjour <strong>${CU.rpName}</strong>, votre compte <em>${CU.rank.toUpperCase()}</em> n'a pas accès à la commande.<br>Seuls les membres <strong>Entreprise</strong> peuvent commander ici.`;
+    document.getElementById('cmd-locked-actions').innerHTML='<button class="btn-y" onclick="logout()">Changer de compte</button>';
     return;
   }
   locked.style.display='none';active.classList.add('show');
   const rc={admin:'rb-admin',vip:'rb-vip',entreprise:'rb-entreprise',staff:'rb-staff'};
-  document.getElementById('ub-av').textContent=(CU.rpName||CU.username)[0].toUpperCase();
-  document.getElementById('ub-name').textContent=CU.rpName;
-  document.getElementById('ub-rank').innerHTML=`<span class="rank-pill rp-${CU.rank}">${CU.rank.toUpperCase()}</span>`;
+  document.getElementById('cub-name').textContent=CU.rpName;
+  document.getElementById('cub-rank').innerHTML=`<span class="rank-badge ${rc[CU.rank]||'rb-client'}">${CU.rank.toUpperCase()}</span>`;
   const cat=DB.catalogues.find(c=>c.id===CU.catId)||DB.catalogues[0];
-  document.getElementById('ub-cat').innerHTML=`Catalogue : <strong>${cat?.name||'Standard'}</strong>`;
+  document.getElementById('cub-cat').innerHTML=`Catalogue : <strong>${cat?.name||'Standard'}</strong>`;
   const pmap={};
   if(cat)cat.items.forEach(i=>{pmap[i.id]={en:i.enabled,cp:i.cp};});
   const uProds=DB.products.filter(p=>{const m=pmap[p.id];return m?m.en:true;}).map(p=>{
@@ -1193,15 +1091,11 @@ function renderCommander(){
   });
   window._uProds=uProds;
   const cats=[
-    {id:"jardinage",    label:"Jardinage",    icon:"🌱"},
-    {id:"nouveaute",    label:"Nouveauté",    icon:"🆕"},
     {id:"quincaillerie",label:"Quincaillerie",icon:"🔧"},
+    {id:"quotidien",    label:"Quotidien",    icon:"🧃"},
     {id:"entretien",    label:"Entretien",    icon:"🛢️"},
     {id:"papeterie",    label:"Papeterie",    icon:"📋"},
-    {id:"quotidien",    label:"Quotidien",    icon:"🛍️"},
-    {id:"alimentaire",  label:"Alimentaire",  icon:"🍎"},
-    {id:"power",        label:"Power",        icon:"💪"},
-    {id:"cbd",          label:"CBD",          icon:"🌿"},
+    {id:"jardinage",    label:"Jardinage",    icon:"🌱"},
   ];
   const avail=cats.filter(c=>uProds.some(p=>p.cat===c.id));
   if(!cmdCatTab||!avail.find(c=>c.id===cmdCatTab))cmdCatTab=avail[0]?.id;
@@ -1226,7 +1120,25 @@ function renderCmdProds(){
   if(q)list=list.filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));
   const grid=document.getElementById('cmd-prod-grid');
   if(!list.length){grid.innerHTML=`<div class="empty">${q?'Aucun résultat pour "'+q+'"':'Aucun produit dans cette catégorie.'}</div>`;return;}
-  grid.innerHTML=list.map(p=>prodCardHTML(p,p.dp,p.isCustom)).join('');
+  grid.innerHTML=list.map(p=>`
+    <div class="pcard fi2">
+      ${p.badge?`<div class="p-badge ${/RARE|💎/.test(p.badge)?'p':/NEW|🔥/.test(p.badge)?'g':'y'}">${p.badge}</div>`:''}
+      ${p.img?`<img class="pcard-img" src="${p.img}" alt="${esc(p.name)}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`:''}`+
+      `<div class="pcard-img-ph" style="${p.img?'display:none':''}">${p.icon||'📦'}</div>
+      <div class="pcard-body">
+        <div class="p-cat-lbl">${p.cat}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-desc">${p.desc}</div>
+        <div class="p-foot">
+          <div class="p-price-wrap">
+            ${p.isCustom?`<div class="p-price-old">$${p.price}</div>`:''}
+            <div class="p-price${p.isCustom?' custom':''}">$${p.dp}</div>
+          </div>
+          <button class="p-add" onclick="addCart(${p.id},${p.dp},'${esc(p.name)}','${p.icon||'📦'}')">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+  setTimeout(initObs,60);
 }
 
 // ══════════════════════════════════════════════
@@ -1240,9 +1152,9 @@ function addCart(id,price,name,icon){
 }
 function updCart(){
   const tot=Object.values(cart).reduce((a,b)=>a+b.qty,0);
-  document.getElementById('cart-bubble').textContent=tot;
+  document.getElementById('cbub').textContent=tot;
   const b=document.getElementById('cart-float');
-  if(b) b.style.display=(tot>0&&CU&&canOrder(CU))?'flex':'none';
+  (tot>0&&CU&&canOrder(CU))?b.classList.add('vis'):b.classList.remove('vis');
 }
 function openOrderMo(){
   renderCartList();
@@ -1310,12 +1222,11 @@ async function submitOrder(){
 // ══════════════════════════════════════════════
 function renderTeamPage(){
   document.getElementById('team-grid').innerHTML=DB.team.map(m=>`
-    <div class="tcard">
-      <div class="tcard-av">${m.img?`<img src="${m.img}" alt="">`:(m.init||m.name[0]).toUpperCase()}</div>
-      <div class="tcard-name">${m.name}</div>
-      <div class="tcard-grade">${m.grade}</div>
-      <div class="tcard-sub">${m.sub||''}</div>
+    <div class="tcard fi2">
+      ${m.img?`<img class="tcard-img" src="${m.img}" alt="${esc(m.name)}">`:`<div class="tcard-img-ph"><div class="t-online"></div>${m.init||m.name[0]}</div>`}
+      <div class="tcard-body"><div class="t-name">${m.name}</div><div class="t-grade">[ ${m.grade} ]</div><div class="t-sub">${m.sub}</div></div>
     </div>`).join('');
+  setTimeout(initObs,60);
 }
 
 // ══════════════════════════════════════════════
@@ -1323,10 +1234,11 @@ function renderTeamPage(){
 // ══════════════════════════════════════════════
 function renderPartnersPage(){
   document.getElementById('part-grid').innerHTML=DB.partners.map(p=>`
-    <div class="prt-card">
-      <div class="prt-logo">${p.img?`<img src="${p.img}" alt="">`:p.icon||'🤝'}</div>
-      <div><div class="prt-name">${p.name}</div><div class="prt-desc">${p.desc||''}</div></div>
+    <div class="prt fi2">
+      ${p.img?`<img class="prt-logo" src="${p.img}" alt="">`:`<div class="prt-logo-ph">${p.icon||'🤝'}</div>`}
+      <div class="prt-info"><div class="prt-name">${p.name}</div><div class="prt-desc">${p.desc}</div></div>
     </div>`).join('');
+  setTimeout(initObs,60);
 }
 
 // ══════════════════════════════════════════════
@@ -1336,10 +1248,11 @@ function renderGalerie(){
   const grid=document.getElementById('gallery-grid');
   if(!DB.gallery.length){grid.innerHTML='<div class="gallery-empty">📸 Aucune photo pour le moment.<br>L\'admin peut en ajouter depuis le panneau Admin → Galerie.</div>';return;}
   grid.innerHTML=DB.gallery.map((g,i)=>`
-    <div class="gal-item" onclick="openLightbox(${i})">
-      <img src="${g.img}" alt="${esc(g.title||'')}">
-      <div class="gal-item-title">${g.title||''}</div>
+    <div class="gallery-item fi2" onclick="openLightbox(${i})">
+      <img src="${g.img}" alt="${esc(g.title||'')}" onerror="this.parentElement.innerHTML='<div class=gallery-empty>📸</div>'">
+      <div class="gallery-item-overlay"><div class="gallery-item-title">${g.title||''}</div></div>
     </div>`).join('');
+  setTimeout(initObs,60);
 }
 function openLightbox(i){
   lbIdx=i;const g=DB.gallery[i];
@@ -1370,14 +1283,15 @@ function renderReviews(){
     </div>`;return;
   }
   grid.innerHTML=DB.reviews.map(r=>`
-    <div class="rcard">
+    <div class="rcard fi2">
       <div class="r-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
       <div class="r-text">${r.text}</div>
       <div class="r-auth">
-        <div class="r-av">${(r.auth[0]||'?').toUpperCase()}</div>
+        <div class="r-av">${r.avatar?`<img src="${r.avatar}" alt="">`:( r.auth[0]||'?').toUpperCase()}</div>
         <div><div class="r-name">${r.auth}</div><div class="r-date">${r.date}</div></div>
       </div>
     </div>`).join('');
+  setTimeout(initObs,60);
 }
 function setR(v){revR=v;document.querySelectorAll('.sstar').forEach((b,i)=>b.classList.toggle('on',i<v));}
 function submitReview(){
@@ -1394,12 +1308,12 @@ function submitReview(){
 //  ADMIN PANELS
 // ══════════════════════════════════════════════
 function renderAdmin(){
-  renderProdList();populateCESel();renderCE();renderUserList();renderTeamAdmin();renderPartAdmin();renderGalAdmin();renderRevAdmin();renderPromoAdmin();
-  if(document.getElementById('st-webhook'))document.getElementById('st-webhook').value=DB.webhook;
-  if(document.getElementById('st-orders'))document.getElementById('st-orders').textContent=DB.orderCount;
-  if(document.getElementById('st-prods'))document.getElementById('st-prods').textContent=DB.products.length;
-  if(document.getElementById('st-users'))document.getElementById('st-users').textContent=DB.users.length;
-  
+  renderProdList();populateCESel();renderCE();renderUserList();renderTeamAdmin();renderPartAdmin();renderGalAdmin();renderRevAdmin();
+  document.getElementById('st-webhook').value=DB.webhook;
+  document.getElementById('st-orders').textContent=DB.orderCount;
+  document.getElementById('st-prods').textContent=DB.products.length;
+  document.getElementById('st-users').textContent=DB.users.length;
+  document.getElementById('st-gallery').textContent=DB.gallery.length;
 }
 function aTab(id,btn){
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
@@ -1411,7 +1325,7 @@ function aTab(id,btn){
   if(id==='partners')renderPartAdmin();
   if(id==='gallery') renderGalAdmin();
   if(id==='reviews') renderRevAdmin();
-  if(id==='settings'){if(document.getElementById('st-webhook'))document.getElementById('st-webhook').value=DB.webhook;if(document.getElementById('st-orders'))document.getElementById('st-orders').textContent=DB.orderCount;if(document.getElementById('st-prods'))document.getElementById('st-prods').textContent=DB.products.length;if(document.getElementById('st-users'))document.getElementById('st-users').textContent=DB.users.length;}
+  if(id==='settings'){document.getElementById('st-webhook').value=DB.webhook;document.getElementById('st-orders').textContent=DB.orderCount;document.getElementById('st-prods').textContent=DB.products.length;document.getElementById('st-users').textContent=DB.users.length;document.getElementById('st-gallery').textContent=DB.gallery.length;}
 }
 
 // PRODUCTS
@@ -1452,7 +1366,7 @@ function deleteCat(){
   if(id==='default'){ntf('Impossible de supprimer le catalogue par défaut',true);return;}
   askConfirm('Supprimer ce catalogue ?',()=>{DB.catalogues=DB.catalogues.filter(c=>c.id!==id);DB.users.forEach(u=>{if(u.catId===id)u.catId='default';});saveDB();populateCESel();renderCE();ntf('Supprimé');});
 }
-function renderCE(){const id=document.getElementById('ce-sel').value;const cat=DB.catalogues.find(c=>c.id===id);if(!cat)return;document.getElementById('ce-title').textContent='📦 '+cat.name;const defs=[{id:"jardinage",l:"Jardinage",i:"🌱"},{id:"nouveaute",l:"Nouveauté",i:"🆕"},{id:"quincaillerie",l:"Quincaillerie",i:"🔧"},{id:"entretien",l:"Entretien",i:"🛢️"},{id:"papeterie",l:"Papeterie",i:"📋"},{id:"quotidien",l:"Quotidien",i:"🛍️"},{id:"alimentaire",l:"Alimentaire",i:"🍎"},{id:"power",l:"Power",i:"💪"},{id:"cbd",l:"CBD",i:"🌿"}];document.getElementById('ce-cat-tabs').innerHTML=defs.map(d=>`<button class="cetab${d.id===adminCECat?' active':''}" onclick="switchCECat('${d.id}',this)">${d.i} ${d.l}</button>`).join('');renderPTog(cat);}
+function renderCE(){const id=document.getElementById('ce-sel').value;const cat=DB.catalogues.find(c=>c.id===id);if(!cat)return;document.getElementById('ce-title').textContent='📦 '+cat.name;const defs=[{id:"quincaillerie",l:"Quincaillerie",i:"🔧"},{id:"quotidien",l:"Quotidien",i:"🧃"},{id:"entretien",l:"Entretien",i:"🛢️"},{id:"papeterie",l:"Papeterie",i:"📋"},{id:"jardinage",l:"Jardinage",i:"🌱"}];document.getElementById('ce-cat-tabs').innerHTML=defs.map(d=>`<button class="cetab${d.id===adminCECat?' active':''}" onclick="switchCECat('${d.id}',this)">${d.i} ${d.l}</button>`).join('');renderPTog(cat);}
 function switchCECat(cat,btn){adminCECat=cat;document.querySelectorAll('.cetab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const id=document.getElementById('ce-sel').value;const c=DB.catalogues.find(x=>x.id===id);if(c)renderPTog(c);}
 function renderPTog(cat){
   const prods=DB.products.filter(p=>p.cat===adminCECat);
@@ -1562,15 +1476,13 @@ function delPart(id){askConfirm('Supprimer ce partenaire ?',()=>{DB.partners=DB.
 function renderGalAdmin(){
   const grid=document.getElementById('gal-admin-grid');
   if(!DB.gallery.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Aucune photo. Ajoutez-en avec le bouton ➕</div>';return;}
-  const gadm=document.getElementById('gal-admin-grid');
-  gadm.innerHTML=DB.gallery.map((g,i)=>`
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden">
-      <img src="${g.img}" alt="" style="width:100%;height:110px;object-fit:cover">
-      <div style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <span style="font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.title||'Sans titre'}</span>
-        <button class="btn-sm red" onclick="delGal(${i})">🗑</button>
-      </div>
+  grid.innerHTML=DB.gallery.map((g,i)=>`
+    <div class="gal-admin-item fi2">
+      <img src="${g.img}" alt="${esc(g.title||'')}">
+      <div class="gal-admin-item-info"><div class="gal-admin-item-title">${g.title||'Sans titre'}</div><button class="btn-sm r" onclick="delGal(${i})">🗑</button></div>
     </div>`).join('');
+  document.getElementById('st-gallery').textContent=DB.gallery.length;
+  setTimeout(initObs,60);
 }
 function openGalEdit(){
   ['gal-img','gal-title'].forEach(f=>document.getElementById(f).value='');
@@ -1608,62 +1520,6 @@ async function changePass(){
   document.getElementById('st-np').value='';document.getElementById('st-cp').value='';
   ntf('✅ Mot de passe changé !');
 }
-function renderPromoAdmin(){
-  if(!DB.promos)DB.promos=[{icon:'📦',label:'',title:'',sub:'',color:'#f4f4f4',cat:''},...Array(2).fill({icon:'📦',label:'',title:'',sub:'',color:'#f4f4f4',cat:''})];
-  document.getElementById('promo-edit-list').innerHTML=DB.promos.map((p,i)=>`
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px">
-      <div style="font-size:14px;font-weight:800;margin-bottom:14px">Bannière ${i+1}</div>
-      <div class="form-row form-3">
-        <div class="fg"><label class="fl">Émoji / Icône</label><input class="fi" id="promo-icon-${i}" type="text" value="${p.icon||''}" maxlength="4"></div>
-        <div class="fg"><label class="fl">Label (petit texte)</label><input class="fi" id="promo-label-${i}" type="text" value="${p.label||''}"></div>
-        <div class="fg"><label class="fl">Couleur fond</label><input class="fi" id="promo-color-${i}" type="color" value="${p.color||'#f4f4f4'}" style="height:38px;padding:3px"></div>
-      </div>
-      <div class="form-row form-2">
-        <div class="fg"><label class="fl">Titre principal</label><input class="fi" id="promo-title-${i}" type="text" value="${p.title||''}"></div>
-        <div class="fg"><label class="fl">Sous-titre</label><input class="fi" id="promo-sub-${i}" type="text" value="${p.sub||''}"></div>
-      </div>
-      <div class="fg"><label class="fl">Catégorie liée</label>
-        <select class="fi" id="promo-cat-${i}">
-          <option value="">Aucune (va sur Commander)</option>
-          <option value="quincaillerie" ${p.cat==='quincaillerie'?'selected':''}>🔧 Quincaillerie</option>
-          <option value="quotidien"     ${p.cat==='quotidien'?'selected':''}>🧃 Quotidien</option>
-          <option value="entretien"     ${p.cat==='entretien'?'selected':''}>🛢️ Entretien</option>
-          <option value="papeterie"     ${p.cat==='papeterie'?'selected':''}>📋 Papeterie</option>
-          <option value="jardinage"     ${p.cat==='jardinage'?'selected':''}>🌱 Jardinage</option>
-        </select>
-      </div>
-      <button class="btn-primary" onclick="savePromo(${i})" style="margin-top:4px">💾 Sauvegarder</button>
-    </div>`).join('');
-}
-
-function savePromo(i){
-  if(!DB.promos)DB.promos=[];
-  DB.promos[i]={
-    icon:  document.getElementById('promo-icon-'+i).value.trim(),
-    label: document.getElementById('promo-label-'+i).value.trim(),
-    title: document.getElementById('promo-title-'+i).value.trim(),
-    sub:   document.getElementById('promo-sub-'+i).value.trim(),
-    color: document.getElementById('promo-color-'+i).value,
-    cat:   document.getElementById('promo-cat-'+i).value,
-  };
-  saveDB();renderPromos();ntf('✅ Bannière '+( i+1)+' sauvegardée !');
-}
-
-function aTab(id,btn){
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.a-section').forEach(s=>s.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('as-'+id).classList.add('active');
-  if(id==='catalogues'){populateCESel();renderCE();}
-  if(id==='users')   renderUserList();
-  if(id==='team')    renderTeamAdmin();
-  if(id==='partners')renderPartAdmin();
-  if(id==='gallery') renderGalAdmin();
-  if(id==='reviews') renderRevAdmin();
-  if(id==='promos')  renderPromoAdmin();
-  if(id==='asettings'){if(document.getElementById('st-webhook'))document.getElementById('st-webhook').value=DB.webhook;if(document.getElementById('st-orders'))document.getElementById('st-orders').textContent=DB.orderCount;if(document.getElementById('st-prods'))document.getElementById('st-prods').textContent=DB.products.length;if(document.getElementById('st-users'))document.getElementById('st-users').textContent=DB.users.length;}
-}
-
 function exportDB(){const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ltd_grove_'+Date.now()+'.json';a.click();ntf('⬇️ Export téléchargé !');}
 function importDB(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(!d.products||!d.users){ntf('Fichier invalide !',true);return;}DB=d;saveDB();renderAdmin();buildTicker();ntf('✅ Base importée !');}catch{ntf('Erreur lecture',true);}};r.readAsText(f);input.value='';}
 function resetDB(){askConfirm('⚠️ Réinitialiser TOUTE la base ? Irréversible !',()=>{DB=defaultDB();saveDB();renderAdmin();buildTicker();ntf('Base réinitialisée');});}
@@ -1673,7 +1529,6 @@ function resetDB(){askConfirm('⚠️ Réinitialiser TOUTE la base ? Irréversib
 // ══════════════════════════════════════════════
 function renderSettings(){
   document.getElementById('p-webhook').value=DB.webhook;
-  applyTheme(DB.theme||'light');
   document.getElementById('p-webhook-status').textContent='';
   const stats=[
     {label:'Commandes totales', val:DB.orderCount,       color:'var(--green)'},
@@ -1774,61 +1629,9 @@ function closeOvOut(e,id){if(e.target===document.getElementById(id))closeOv(id);
 function prevImg(inp,prev){const v=document.getElementById(inp).value.trim();const el=document.getElementById(prev);if(v){el.src=v;el.classList.add('show');}else el.classList.remove('show');}
 function ntf(msg,err=false){const el=document.getElementById('notif');el.textContent=msg;el.className='notif vis'+(err?' err':'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('vis'),3400);}
 function initObs(){const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');});},{threshold:.05});document.querySelectorAll('.fi2:not(.vis)').forEach(el=>o.observe(el));}
-
-// ══════════════════════════════════════════════
-//  TICKER / PROMOS
-// ══════════════════════════════════════════════
-function buildTicker(){ renderPromos(); }
-
-function renderPromos(){
-  if(!DB.promos) return;
-  DB.promos.forEach((p,i)=>{
-    const el=document.getElementById('pb-'+i);
-    if(!el)return;
-    el.innerHTML=`
-      <div class="pb-icon" style="background:${p.color||'#2a2a2a'}">${p.icon||'📦'}</div>
-      <div>
-        <div class="pb-label">${p.label||''}</div>
-        <div class="pb-title">${p.title||''}</div>
-        <div class="pb-sub">${p.sub||''}</div>
-      </div>
-      <div class="pb-arrow">›</div>
-    `;
-    el.onclick=()=>{ if(p.cat){ cmdCatTab=p.cat; } goPage('commander'); };
-  });
-}
-
 // ══════════════════════════════════════════════
 //  REFRESH HOME STATS — centralisé
 // ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-//  THÈME
-// ══════════════════════════════════════════════
-function applyTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  const btn = document.getElementById('theme-toggle');
-  if(btn) btn.textContent = t==='dark' ? '☀️' : '🌙';
-  // Aussi dans les paramètres
-  const sel = document.getElementById('theme-select');
-  if(sel) sel.value = t;
-}
-
-function toggleTheme(){
-  const current = document.documentElement.getAttribute('data-theme')||'light';
-  const next = current==='dark'?'light':'dark';
-  DB.theme = next;
-  applyTheme(next);
-  saveDB();
-  ntf(next==='dark'?'🌙 Thème sombre activé':'☀️ Thème clair activé');
-}
-
-function setTheme(t){
-  DB.theme=t;
-  applyTheme(t);
-  saveDB();
-  ntf(t==='dark'?'🌙 Thème sombre':'☀️ Thème clair');
-}
-
 function refreshHomeStats(animated=false){
   const orders  = DB.orderCount;
   const prods   = DB.products.length;
@@ -1853,18 +1656,29 @@ function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 
 /* ── askConfirm : remplace confirm() natif ── */
 function askConfirm(msg,onYes){
-  document.getElementById('confirm-msg').textContent=msg;
-  document.getElementById('confirm-yes').onclick=()=>{closeOv('confirm-ov');onYes();};
-  openOv('confirm-ov');
+  const old=document.getElementById('_acd');if(old)old.remove();
+  const el=document.createElement('div');el.id='_acd';
+  el.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)';
+  el.innerHTML=`<div style="background:#0c0a08;border:1px solid rgba(248,113,113,.3);max-width:340px;width:100%;padding:26px 24px;position:relative;box-shadow:0 0 28px rgba(248,113,113,.12)">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#f87171,#fbbf24)"></div>
+    <div style="font-family:'Permanent Marker',cursive;font-size:14px;color:#f0ebe0;margin-bottom:20px;line-height:1.5">${msg}</div>
+    <div style="display:flex;gap:9px">
+      <button onclick="document.getElementById('_acd').remove()" style="flex:1;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.08);color:#5a7a50;font-family:'Permanent Marker',cursive;font-size:11px;cursor:pointer">Annuler</button>
+      <button id="_acd_yes" style="flex:1;padding:10px;background:#f87171;border:none;color:#fff;font-family:'Permanent Marker',cursive;font-size:11px;cursor:pointer;box-shadow:0 0 12px rgba(248,113,113,.3)">🗑 Supprimer</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  document.getElementById('_acd_yes').onclick=()=>{el.remove();onYes();};
+  el.addEventListener('click',e=>{if(e.target===el)el.remove();});
 }
 
 // ══════════════════════════════════════════════
 //  NAV SCROLL INDICATOR
 // ══════════════════════════════════════════════
-function updateCNavScroll(){
-  const tabs = document.getElementById('cat-nav-inner');
-  const thumb = document.getElementById('cnav-thumb');
-  const track = document.getElementById('cnav-scroll-track');
+function updateNavScroll(){
+  const tabs = document.getElementById('nav-tabs');
+  const thumb = document.getElementById('nav-scroll-thumb');
+  const track = document.getElementById('nav-scroll-track');
   if(!tabs||!thumb||!track) return;
   const sw = tabs.scrollWidth, cw = tabs.clientWidth, sl = tabs.scrollLeft;
   // Toujours visible — taille du thumb = proportion visible, min 30%
@@ -1879,9 +1693,9 @@ function updateCNavScroll(){
 (function(){
   let dragging=false, startX=0, startScroll=0;
   document.addEventListener('DOMContentLoaded', ()=>{
-    const thumb = document.getElementById('cnav-thumb');
-    const tabs  = document.getElementById('cat-nav-inner');
-    const track = document.getElementById('cnav-scroll-track');
+    const thumb = document.getElementById('nav-scroll-thumb');
+    const tabs  = document.getElementById('nav-tabs');
+    const track = document.getElementById('nav-scroll-track');
     if(!thumb||!tabs||!track) return;
     // Init
     setTimeout(updateNavScroll, 100);
@@ -1918,7 +1732,6 @@ function updateCNavScroll(){
     document.addEventListener('touchend', ()=>{ dragging=false; });
   });
 })();
-
 </script>
 </body>
 </html>

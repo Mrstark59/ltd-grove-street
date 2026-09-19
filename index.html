@@ -818,13 +818,12 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;back
 
 <div class="notif" id="notif"></div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
 // ══════════════════════════════════════════════
-//  FIREBASE SDK
+//  FIREBASE SDK (compat — fonctionne partout)
 // ══════════════════════════════════════════════
-import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getDatabase, ref, set, get, onValue, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-
 const firebaseConfig = {
   apiKey:            "AIzaSyDdFs4Lcb9bq4Y3tHQWEzpbSVQDD2VaLg4",
   authDomain:        "ltd-grove-street-80115.firebaseapp.com",
@@ -834,12 +833,12 @@ const firebaseConfig = {
   messagingSenderId: "71900497374",
   appId:             "1:71900497374:web:a636c37a18e7b3dc8b494f"
 };
-const fbApp = initializeApp(firebaseConfig);
-const fbDB  = getDatabase(fbApp);
+firebase.initializeApp(firebaseConfig);
+const fbDB = firebase.database();
 
-// Helpers
-async function fbGet(path){ const s=await get(ref(fbDB,path)); return s.exists()?s.val():null; }
-async function fbSet(path,val){ await set(ref(fbDB,path),val); }
+// Helpers Firebase compat
+async function fbGet(path){ const s=await fbDB.ref(path).get(); return s.exists()?s.val():null; }
+async function fbSet(path,val){ await fbDB.ref(path).set(val); }
 function toObj(arr){ return arr.reduce((o,item,i)=>{o[item.id!=null?'i'+item.id:'k'+i]=item;return o;},{});}
 
 // Chargement depuis Firebase

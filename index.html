@@ -895,49 +895,11 @@ function hashQuick(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charC
 const DB_KEY='ltd_gs_v2';
 
 function defaultDB(){
-  const p=[
-    {id:1,name:"Pile Verte",    icon:"🔋",desc:"Pile alcaline standard",          price:3,   cat:"quincaillerie",img:"",badge:""},
-    {id:2,name:"Outils",        icon:"🔧",desc:"Kit d'outils basique",             price:5,   cat:"quincaillerie",img:"",badge:""},
-    {id:3,name:"Perceuse",      icon:"🪛",desc:"Perceuse électrique légère",       price:10,  cat:"quincaillerie",img:"",badge:""},
-    {id:4,name:"Grosse Perceuse",icon:"🔩",desc:"Perceuse industrielle",           price:12,  cat:"quincaillerie",img:"",badge:""},
-    {id:5,name:"Pince Coupante",icon:"✂️",desc:"Pince coupante renforcée",         price:16,  cat:"quincaillerie",img:"",badge:""},
-    {id:6,name:"Pince Plaque",  icon:"🪝",desc:"Pince pour plaques spéciales",     price:23,  cat:"quincaillerie",img:"",badge:""},
-    {id:7,name:"Perceuse Manuel",icon:"☯️",desc:"Perceuse à main mécanique",       price:12,  cat:"quincaillerie",img:"",badge:""},
-    {id:8,name:"Foret Perceuse",icon:"🗜️",desc:"Foret professionnel extra dur",    price:650, cat:"quincaillerie",img:"",badge:"RARE"},
-    {id:9,name:"Papier Rouler", icon:"📜",desc:"Feuilles fines, pack x10",         price:2,   cat:"quotidien",    img:"",badge:""},
-    {id:10,name:"Canne à Pêche",icon:"🎣",desc:"Canne à pêche robuste",            price:60,  cat:"quotidien",    img:"",badge:""},
-    {id:11,name:"Appât",        icon:"🪱",desc:"Boite d'appâts frais",             price:10,  cat:"quotidien",    img:"",badge:""},
-    {id:12,name:"Élastique",    icon:"🪢",desc:"Lot d'élastiques résistants",      price:20,  cat:"quotidien",    img:"",badge:""},
-    {id:13,name:"Ticket Gratter",icon:"🎫",desc:"Lot de 5 tickets",                price:25,  cat:"quotidien",    img:"",badge:""},
-    {id:14,name:"Post It",      icon:"📌",desc:"Bloc 50 post-its colorés",         price:50,  cat:"quotidien",    img:"",badge:""},
-    {id:15,name:"Ballon Football",icon:"⚽",desc:"Ballon taille 5",                price:50,  cat:"quotidien",    img:"",badge:""},
-    {id:16,name:"Ballon Basket",icon:"🏀",desc:"Ballon NBA",                       price:50,  cat:"quotidien",    img:"",badge:""},
-    {id:17,name:"BMX",          icon:"🚲",desc:"BMX de rue performant",            price:200, cat:"quotidien",    img:"",badge:"🔥"},
-    {id:18,name:"Bicarbonate",  icon:"🧂",desc:"Sachet multiusage",                price:2,   cat:"entretien",    img:"",badge:""},
-    {id:19,name:"Huile",        icon:"🫙",desc:"Huile végétale 1L",                price:8,   cat:"entretien",    img:"",badge:""},
-    {id:20,name:"Huile Noire",  icon:"🛢️",desc:"Huile moteur noire épaisse",       price:16,  cat:"entretien",    img:"",badge:""},
-    {id:21,name:"Huile Shell",  icon:"⚡",desc:"Huile Shell premium",              price:12,  cat:"entretien",    img:"",badge:""},
-    {id:22,name:"Batterie Voiture",icon:"🔌",desc:"Batterie 12V haute capacité",   price:20,  cat:"entretien",    img:"",badge:"TOP"},
-    {id:23,name:"Batterie",     icon:"🔋",desc:"Batterie portable",               price:10,  cat:"entretien",    img:"",badge:""},
-    {id:24,name:"Colle",        icon:"🧴",desc:"Colle forte polyvalente",          price:3,   cat:"papeterie",    img:"",badge:""},
-    {id:25,name:"Sachet Vide",  icon:"🛍️",desc:"Sachet grand format",             price:5,   cat:"papeterie",    img:"",badge:""},
-    {id:26,name:"Encre",        icon:"🖊️",desc:"Flacon d'encre 50ml",             price:6,   cat:"papeterie",    img:"",badge:""},
-    {id:27,name:"Porte Document",icon:"📁",desc:"Porte-document rigide A4",        price:10,  cat:"papeterie",    img:"",badge:""},
-    {id:28,name:"Porte Feuille",icon:"👛",desc:"Portefeuille cuir",               price:10,  cat:"papeterie",    img:"",badge:""},
-    {id:29,name:"Trousseau Clés",icon:"🔑",desc:"Trousseau multi-crochets",        price:90,  cat:"papeterie",    img:"",badge:""},
-    {id:30,name:"Spray Tag",    icon:"🎨",desc:"Bombe de peinture graffiti",       price:1900,cat:"papeterie",    img:"",badge:"💎 RARE"},
-    {id:31,name:"Éponge",       icon:"🧽",desc:"Éponge absorbante",               price:1100,cat:"papeterie",    img:"",badge:"RARE"},
-    {id:32,name:"Fertilisant",  icon:"💊",desc:"Fertilisant organique",           price:10,  cat:"jardinage",    img:"",badge:""},
-    {id:33,name:"Pot de Fleur", icon:"🪴",desc:"Pot en céramique",                price:10,  cat:"jardinage",    img:"",badge:""},
-    {id:34,name:"Table",        icon:"🪑",desc:"Table de jardin pliante",          price:10,  cat:"jardinage",    img:"",badge:""},
-    {id:35,name:"Terre",        icon:"🌱",desc:"Sac de terreau 10L",               price:12,  cat:"jardinage",    img:"",badge:""},
-    {id:36,name:"Bac Jardinage",icon:"🌿",desc:"Bac de culture en bois",           price:18,  cat:"jardinage",    img:"",badge:""},
-    {id:37,name:"Lumière Violette",icon:"💡",desc:"Lampe UV horticulture",         price:36,  cat:"jardinage",    img:"",badge:"💎"},
-  ];
+  
 const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
 const hEnt   = 'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644';
 const hCli   = '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
-const p=[
+const PRODS=[
   // JARDINAGE
   {id:1, name:'Fertilisant',        cat:'jardinage',      icon:'🌱', desc:'Booste la croissance de vos plantes.',        price:10,  img:'https://i.postimg.cc/SQnxv0pV/91BPwn-XWpu-L-AC-UF1000-1000-QL80.jpg', badge:''},
   {id:2, name:'Pot de Fleur',       cat:'jardinage',      icon:'🪴', desc:'Pour cultiver en beauté.',                     price:10,  img:'https://i.postimg.cc/pTXt8jPs/339427-010.jpg', badge:''},
@@ -1044,6 +1006,41 @@ const p=[
   {id:95,name:'Chillma',            cat:'cbd',            icon:'😌', desc:'Le produit détente par excellence.',            price:20,  img:'https://i.postimg.cc/HxRBRmVP/image-2026-05-25-195602202.png', badge:''},
   {id:96,name:'Joint de CBD',       cat:'cbd',            icon:'🌿', desc:'100% CBD, roulé proprement.',                  price:20,  img:'https://i.postimg.cc/vBZ5zNXw/image-2026-05-25-202116941.png', badge:''},
 ];
+  return {
+    theme: 'dark',
+    adminPassHash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
+    webhook: '',
+    orderCount: 0,
+    products: PRODS,
+    gallery: [],
+    orders: [],
+    catalogues:[
+      {id:'default',name:'Standard',    items:PRODS.map(x=>({'id':x.id,'enabled':true,'cp':null})) },
+      {id:'ent',    name:'Entreprise',  items:PRODS.map(x=>({'id':x.id,'enabled':true,'cp':Math.round(x.price*.7)})) },
+    ],
+    users:[
+      {id:1,username:'admin',      passHash:'240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', rank:'admin',      rpName:'Admin',        catId:'default'},
+      {id:3,username:'entreprise1',passHash:'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644',   rank:'entreprise', rpName:'Entreprise 1', catId:'ent'},
+      {id:4,username:'client1',    passHash:'186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c',   rank:'client',     rpName:'John Doe',     catId:'default'},
+    ],
+    team:[
+      {id:1,name:"Flash", grade:"CEO",      sub:"Fondateur du LTD",          init:"F",img:""},
+      {id:2,name:"Marco", grade:"MANAGER",  sub:"Responsable des stocks",    init:"M",img:""},
+      {id:3,name:"Sofia", grade:"STAFF",    sub:"Accueil & service client",  init:"S",img:""},
+      {id:4,name:"Tony",  grade:"DELIVERY", sub:"Livraisons express",        init:"T",img:""},
+    ],
+    partners:[
+      {id:1,name:"Fleeca Bank",     icon:"🏦",desc:"Partenaire bancaire officiel",img:""},
+      {id:2,name:"Rockford Garage", icon:"🔧",desc:"Entretien de la flotte",      img:""},
+    ],
+    reviews:[],
+    promos:[
+      {icon:'🆕', label:'Nouveautés', title:'Nouveautés', sub:'Roses, anneaux, BMX 2 places...', color:'#4a1a2a', cat:'nouveaute'},
+      {icon:'🍎', label:'Arrivages frais', title:'Alimentaire', sub:'Menus, bonbons, boissons', color:'#1a3a1a', cat:'alimentaire'},
+      {icon:'💪', label:'Zone sportive', title:'Power & CBD', sub:'Whey, barres, CBD', color:'#1a1a3a', cat:'power'},
+    ],
+  };
+}
 function canOrder(u){return u&&ALLOWED.includes(u.rank);}
 
 function openLogin(){openOv('login-ov');setTimeout(()=>document.getElementById('l-user').focus(),120);}

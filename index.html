@@ -894,6 +894,7 @@ function hashQuick(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charC
 // ══════════════════════════════════════════════
 const DB_KEY='ltd_gs_v2';
 
+
 function defaultDB(){
   
 const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
@@ -1041,6 +1042,44 @@ const PRODS=[
     ],
   };
 }
+
+// ══════════════════════════════════════════════
+//  STATE & VARIABLES GLOBALES
+// ══════════════════════════════════════════════
+const ALLOWED = ['entreprise','admin','staff'];
+
+let DB = (()=>{
+  try{
+    const r = localStorage.getItem(DB_KEY);
+    if(!r) return defaultDB();
+    const saved = JSON.parse(r);
+    const def = defaultDB();
+    return {
+      theme:         saved.theme         ?? def.theme,
+      adminPassHash: saved.adminPassHash ?? def.adminPassHash,
+      webhook:       saved.webhook       ?? '',
+      orderCount:    saved.orderCount    ?? def.orderCount,
+      products:      (saved.products&&saved.products.length)     ? saved.products    : def.products,
+      catalogues:    (saved.catalogues&&saved.catalogues.length) ? saved.catalogues  : def.catalogues,
+      users:         (saved.users&&saved.users.length)           ? saved.users       : def.users,
+      team:          (saved.team&&saved.team.length)             ? saved.team        : def.team,
+      partners:      (saved.partners&&saved.partners.length)     ? saved.partners    : def.partners,
+      gallery:       saved.gallery  ?? [],
+      orders:        saved.orders   ?? [],
+      reviews:       saved.reviews  ?? [],
+      promos:        saved.promos   ?? def.promos,
+    };
+  }catch(e){ return defaultDB(); }
+})();
+
+let CU = null;
+let cart = {};
+let revR = 0;
+let cmdCatTab = null;
+let adminCECat = 'jardinage';
+let eProd = null, eUser = null, eTeam = null, ePart = null, eGal = null, lbIdx = 0;
+// saveDB → remplacée par version Firebase async
+
 function canOrder(u){return u&&ALLOWED.includes(u.rank);}
 
 

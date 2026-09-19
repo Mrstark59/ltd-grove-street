@@ -10,10 +10,21 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --red:#e02020;--red2:#c01818;--dark:#111;--bg:#0f0f0f;--white:#1a1a1a;
-  --border:#2a2a2a;--text:#f0f0f0;--muted:#6b6b6b;--card:#1a1a1a;
+/* ══ THÈME CLAIR (défaut) ══ */
+:root,[data-theme="light"]{
+  --red:#e02020;--red2:#c01818;--dark:#111;
+  --bg:#f4f4f2;--surface:#fff;--surface2:#fafafa;
+  --border:#e5e5e5;--text:#1a1a1a;--muted:#6b6b6b;
   --green:#16a34a;--yellow:#d97706;
+  --shadow:rgba(0,0,0,.08);
+}
+/* ══ THÈME SOMBRE ══ */
+[data-theme="dark"]{
+  --red:#e02020;--red2:#c01818;--dark:#0a0a0a;
+  --bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;
+  --border:#2a2a2a;--text:#f0f0f0;--muted:#666;
+  --green:#22c55e;--yellow:#fbbf24;
+  --shadow:rgba(0,0,0,.4);
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 a{text-decoration:none;color:inherit}
@@ -24,46 +35,46 @@ img{max-width:100%;display:block}
 .topbar{background:var(--red);color:#fff;font-size:12px;font-weight:600;letter-spacing:.5px;text-align:center;padding:7px 16px}
 
 /* ══ HEADER ══ */
-header{background:#111;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+header{background:var(--dark);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:900;box-shadow:0 2px 8px rgba(0,0,0,.07)}
 .header-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:20px;height:64px}
 .logo-wrap{flex-shrink:0;display:flex;align-items:center;gap:10px;cursor:pointer}
 .logo-img{width:48px;height:48px;border-radius:8px;object-fit:cover}
 .logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;line-height:1;color:var(--red)}
 .logo-sub{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 .header-search{flex:1;max-width:540px;position:relative}
-.header-search input{width:100%;padding:10px 16px 10px 42px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:#222;color:#f0f0f0}
-.header-search input:focus{border-color:var(--red);background:#2a2a2a}
+.header-search input{width:100%;padding:10px 16px 10px 42px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:var(--surface2);color:#f0f0f0}
+.header-search input:focus{border-color:var(--red);background:var(--surface2)}
 .header-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
-.header-search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1a1a1a;border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:1000;display:none;max-height:320px;overflow-y:auto}
+.header-search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:1000;display:none;max-height:320px;overflow-y:auto}
 .header-search-results.show{display:block}
-.hsr-item{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;border-bottom:1px solid #2a2a2a}
-.hsr-item:hover{background:#222}
-.hsr-icon{width:36px;height:36px;border-radius:6px;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.hsr-item{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.hsr-item:hover{background:var(--surface2)}
+.hsr-icon{width:36px;height:36px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .hsr-name{font-size:13px;font-weight:600}.hsr-cat{font-size:11px;color:var(--muted)}
 .hsr-price{font-size:14px;font-weight:800;color:var(--red);margin-left:auto}
 .header-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
 .btn-login{padding:9px 18px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
 .btn-login:hover{background:var(--red2)}
-.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#222;border-radius:6px;border:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--surface2);border-radius:6px;border:1px solid var(--border)}
 .user-av{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
 .user-name{font-size:13px;font-weight:700}
 .rank-pill{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .rp-admin{background:#fee2e2;color:#dc2626}.rp-entreprise{background:#fef3c7;color:#d97706}.rp-staff{background:#e0f2fe;color:#0284c7}.rp-client{background:#f0f0f0;color:#6b6b6b}.rp-vip{background:#f3e8ff;color:#7c3aed}
-.btn-logout{padding:6px 12px;background:transparent;border:1px solid #333;border-radius:6px;font-size:12px;font-weight:600;color:#888;cursor:pointer;transition:all .15s}
+.btn-logout{padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
 .btn-logout:hover{border-color:#dc2626;color:#dc2626}
 .cart-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--dark);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
-.cart-btn:hover{background:#222}
+.cart-btn:hover{background:var(--surface2)}
 .cart-bubble{background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
 
 /* ══ NAV CATEGORIES ══ */
-.cat-nav{background:#111;border-bottom:1px solid var(--border)}
+.cat-nav{background:var(--dark);border-bottom:1px solid var(--border)}
 .cat-nav-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none;height:44px}
 .cat-nav-inner::-webkit-scrollbar{display:none}
 .cnav-scroll-wrap{position:relative}
 .cnav-scroll-track{height:2px;background:#f0f0f0;position:relative}
 .cnav-scroll-thumb{position:absolute;top:0;height:100%;background:var(--red);border-radius:0;min-width:40px;cursor:grab;transition:left .05s,width .05s}
 .cnav-scroll-thumb:active{cursor:grabbing}
-.ctab{padding:0 18px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#888;border:none;background:transparent;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;height:44px;transition:all .15s}
+.ctab{padding:0 18px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:transparent;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;height:44px;transition:all .15s}
 .ctab:hover{color:#f0f0f0}
 .ctab.active{color:var(--red);border-bottom-color:var(--red)}
 
@@ -95,10 +106,10 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 
 /* ══ TICKER ══ */
 .promo-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--border)}
-.promo-banner{background:#1a1a1a;padding:14px 20px;display:flex;align-items:center;gap:14px;border-right:1px solid var(--border);transition:background .15s;min-height:70px}
+.promo-banner{background:var(--surface);padding:14px 20px;display:flex;align-items:center;gap:14px;border-right:1px solid var(--border);transition:background .15s;min-height:70px}
 .promo-banner:last-child{border-right:none}
-.promo-banner:hover{background:#222}
-.pb-icon{font-size:32px;flex-shrink:0;width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#2a2a2a}
+.promo-banner:hover{background:var(--surface2)}
+.pb-icon{font-size:32px;flex-shrink:0;width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface2)}
 .pb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px}
 .pb-title{font-size:15px;font-weight:800;line-height:1.2;margin-bottom:2px}
 .pb-sub{font-size:12px;color:var(--muted)}
@@ -114,8 +125,8 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 
 /* ══ PRODUCT GRID ══ */
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border)}
-.pcard{background:#1a1a1a;display:flex;flex-direction:column;transition:box-shadow .2s;cursor:pointer;position:relative}
-.pcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:1;background:#222}
+.pcard{background:var(--surface);display:flex;flex-direction:column;transition:box-shadow .2s;cursor:pointer;position:relative}
+.pcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:1;background:var(--surface2)}
 .pcard-img-wrap{aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
 .pcard-img{width:100%;height:100%;object-fit:cover}
 .pcard-icon{font-size:52px}
@@ -138,17 +149,17 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 .cmd-locked-icon{font-size:56px;margin-bottom:4px}
 .cmd-locked-wrap h2{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;text-transform:uppercase}
 .cmd-locked-wrap p{color:var(--muted);font-size:15px;max-width:380px;line-height:1.7}
-.user-bar{background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.user-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
 .user-bar-name{font-size:16px;font-weight:800}
 .user-bar-cat{font-size:13px;color:var(--muted);margin-left:auto}
 .cmd-search{position:relative;margin-bottom:18px}
-.cmd-search input{width:100%;max-width:400px;padding:10px 14px 10px 40px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:#222;color:#f0f0f0}
+.cmd-search input{width:100%;max-width:400px;padding:10px 14px 10px 40px;border:2px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;background:var(--surface2);color:#f0f0f0}
 .cmd-search input:focus{border-color:var(--red)}
 .cmd-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
 
 /* ══ TEAM ══ */
 .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
-.tcard{background:#1a1a1a;border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:center;padding:24px 16px;transition:box-shadow .2s}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:center;padding:24px 16px;transition:box-shadow .2s}
 .tcard:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
 .tcard-av{width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;overflow:hidden}
 .tcard-av img{width:100%;height:100%;object-fit:cover}
@@ -158,9 +169,9 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 
 /* ══ PARTNERS ══ */
 .partners-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.prt-card{background:#1a1a1a;border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s}
+.prt-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s}
 .prt-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
-.prt-logo{width:56px;height:56px;border-radius:8px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden}
+.prt-logo{width:56px;height:56px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden}
 .prt-logo img{width:100%;height:100%;object-fit:cover}
 .prt-name{font-size:14px;font-weight:800;margin-bottom:3px}
 .prt-desc{font-size:12px;color:var(--muted);line-height:1.4}
@@ -183,13 +194,13 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 
 /* ══ REVIEWS ══ */
 .rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:28px}
-.rcard{background:#1a1a1a;border:1px solid var(--border);border-radius:10px;padding:18px}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
 .r-stars{color:#f59e0b;font-size:14px;letter-spacing:2px;margin-bottom:8px}
 .r-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px;font-style:italic}
 .r-auth{display:flex;align-items:center;gap:9px}
 .r-av{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .r-name{font-size:13px;font-weight:700}.r-date{font-size:10px;color:var(--muted)}
-.rev-form{background:#1a1a1a;border:1px solid var(--border);border-radius:10px;padding:24px;max-width:600px}
+.rev-form{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;max-width:600px}
 .rev-form-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:16px}
 .star-row{display:flex;gap:6px;margin-bottom:12px}
 .sstar{background:none;border:none;font-size:24px;cursor:pointer;color:#d1d5db;transition:color .1s;padding:0;line-height:1}
@@ -198,8 +209,8 @@ header{background:#111;border-bottom:2px solid var(--border);position:sticky;top
 /* ══ FORMS ══ */
 .fg{margin-bottom:12px}
 .fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:5px;display:block}
-.fi,.ft,select.fi{width:100%;background:#222;border:1px solid var(--border);color:var(--text);padding:9px 12px;font-family:'Inter',sans-serif;font-size:13px;outline:none;border-radius:6px;transition:border-color .2s;font-weight:500}
-.fi:focus,.ft:focus,select.fi:focus{border-color:var(--red);background:#2a2a2a}
+.fi,.ft,select.fi{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-family:'Inter',sans-serif;font-size:13px;outline:none;border-radius:6px;transition:border-color .2s;font-weight:500}
+.fi:focus,.ft:focus,select.fi:focus{border-color:var(--red);background:var(--surface2)}
 .ft{resize:vertical;min-height:80px}
 select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
 .form-row{display:grid;gap:12px}.form-2{grid-template-columns:1fr 1fr}.form-3{grid-template-columns:1fr 1fr 1fr}
@@ -207,72 +218,72 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .img-preview.show{display:block}
 .btn-primary{padding:10px 22px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary:hover{background:var(--red2)}
-.btn-secondary{padding:10px 22px;background:#222;color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-secondary:hover{background:#333}
+.btn-secondary{padding:10px 22px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-secondary:hover{background:var(--surface2)}
 .btn-danger{padding:8px 14px;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
 .btn-danger:hover{background:#dc2626;color:#fff}
-.btn-sm{padding:6px 12px;background:#222;border:1px solid var(--border);color:var(--text);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-sm:hover{background:#333}
+.btn-sm{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-sm:hover{background:var(--surface2)}
 .btn-sm.red{background:#fee2e2;border-color:#fecaca;color:#dc2626}.btn-sm.red:hover{background:#dc2626;color:#fff}
 .btn-sm.green{background:#dcfce7;border-color:#bbf7d0;color:#16a34a}.btn-sm.green:hover{background:#16a34a;color:#fff}
 
 /* ══ ADMIN ══ */
-.admin-tabs{display:flex;border-bottom:2px solid var(--border);background:#111;margin-bottom:24px;overflow-x:auto;scrollbar-width:none;gap:0}
+.admin-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--dark);margin-bottom:24px;overflow-x:auto;scrollbar-width:none;gap:0}
 .admin-tabs::-webkit-scrollbar{display:none}
-.atab{padding:12px 18px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-size:13px;font-weight:700;color:#666;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.atab{padding:12px 18px;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:5px}
 .atab:hover{color:#f0f0f0}.atab.active{color:var(--red);border-bottom-color:var(--red)}
 .a-section{display:none}.a-section.active{display:block}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .sec-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase}
-.edit-box{background:#141414;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;display:none}
+.edit-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;display:none}
 .edit-box.open{display:block}
 .edit-box-title{font-size:15px;font-weight:800;margin-bottom:14px}
 .admin-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.al-row{background:#1a1a1a;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:background .15s;flex-wrap:wrap}
-.al-row:hover{background:#222}
-.al-thumb{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#2a2a2a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--border)}
+.al-row{background:var(--surface);padding:12px 14px;display:flex;align-items:center;gap:12px;transition:background .15s;flex-wrap:wrap}
+.al-row:hover{background:var(--surface2)}
+.al-thumb{width:44px;height:44px;border-radius:6px;object-fit:cover;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--border)}
 .al-info{flex:1;min-width:0}
 .al-name{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .al-meta{font-size:11px;color:var(--muted)}
 .al-actions{display:flex;gap:6px;flex-shrink:0}
 .settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-.settings-card{background:#1a1a1a;border:1px solid var(--border);border-radius:10px;padding:20px}
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
 .settings-card-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:24px}
-.stat-card{background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
 .stat-n{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1}
 .stat-n.red{color:var(--red)}.stat-n.grn{color:var(--green)}.stat-n.ylw{color:var(--yellow)}
 .stat-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:3px}
 
 /* ══ CATALOGUE ADMIN ══ */
 .ptog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.ptog{background:#1a1a1a;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
-.ptog:hover{background:#222}.ptog.on{background:#1a1208}
-.ptog-thumb{width:36px;height:36px;border-radius:6px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ptog{background:var(--surface);padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.ptog:hover{background:var(--surface2)}.ptog.on{background:rgba(217,119,6,.08)}
+.ptog-thumb{width:36px;height:36px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .ptog-name{font-size:12px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ptog-base{font-size:10px;color:var(--muted);margin-top:1px}
-.ptog-cp{width:60px;padding:3px 6px;background:#222;border:1px solid var(--border);border-radius:4px;font-size:11px;font-weight:700;color:var(--red);outline:none}
+.ptog-cp{width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:11px;font-weight:700;color:var(--red);outline:none}
 .ptog-cp:focus{border-color:var(--red)}
 .tog{width:34px;height:18px;border-radius:9px;background:#333;position:relative;flex-shrink:0;transition:background .15s;pointer-events:none}
-.tog::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .15s}
 .ptog.on .tog{background:var(--red)}.ptog.on .tog::after{transform:translateX(16px)}
 
 /* ══ MODALS ══ */
 .overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .22s}
 .overlay.open{opacity:1;pointer-events:all}
-.modal{background:#1a1a1a;border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;transform:translateY(8px);transition:transform .22px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.15)}
+.modal{background:var(--surface);border-radius:14px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;transform:translateY(8px);transition:transform .22px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.15)}
 .overlay.open .modal{transform:translateY(0)}
-.modal-close{position:absolute;top:16px;right:16px;background:#2a2a2a;border:none;color:#888;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.modal-close:hover{background:#333;color:#f0f0f0}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;color:var(--muted);font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
 .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
 .login-err{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#dc2626;padding:9px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none;font-weight:600}
 .login-err.show{display:block}
-.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #2a2a2a}
+.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .ci-info{flex:1}
 .ci-name{font-size:14px;font-weight:700}.ci-unit{font-size:11px;color:var(--muted)}
 .ci-qty{display:flex;align-items:center;gap:6px}
-.qbtn{width:26px;height:26px;background:#2a2a2a;border:1px solid #333;border-radius:5px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:all .15s}
+.qbtn{width:26px;height:26px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;transition:all .15s}
 .qbtn:hover{background:var(--red);border-color:var(--red);color:#fff}
 .ci-total{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--red);min-width:56px;text-align:right}
 .total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:2px solid var(--border);margin-top:4px}
@@ -291,7 +302,7 @@ select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 .notif.vis{transform:translateY(0);opacity:1}
 
 /* ══ FOOTER ══ */
-footer{background:#0a0a0a;color:rgba(255,255,255,.4);padding:20px;text-align:center;font-size:12px;font-weight:500;margin-top:40px}
+footer{background:var(--dark);color:rgba(255,255,255,.4);padding:20px;text-align:center;font-size:12px;font-weight:500;margin-top:40px}
 footer span{color:var(--red)}
 
 /* ══ EMPTY STATE ══ */
@@ -480,11 +491,15 @@ footer span{color:var(--red)}
           <div class="fg"><label class="fl">Nom *</label><input class="fi" id="pe-name" type="text"></div>
           <div class="fg"><label class="fl">Catégorie *</label>
             <select class="fi" id="pe-cat">
+              <option value="jardinage">🌱 Jardinage</option>
+              <option value="nouveaute">🆕 Nouveauté</option>
               <option value="quincaillerie">🔧 Quincaillerie</option>
-              <option value="quotidien">🧃 Quotidien</option>
               <option value="entretien">🛢️ Entretien</option>
               <option value="papeterie">📋 Papeterie</option>
-              <option value="jardinage">🌱 Jardinage</option>
+              <option value="quotidien">🛍️ Quotidien</option>
+              <option value="alimentaire">🍎 Alimentaire</option>
+              <option value="power">💪 Power</option>
+              <option value="cbd">🌿 CBD</option>
             </select>
           </div>
         </div>
@@ -507,7 +522,7 @@ footer span{color:var(--red)}
         <button class="btn-sm" onclick="renameCat()">✏️ Renommer</button>
         <button class="btn-sm red" onclick="deleteCat()">🗑 Supprimer</button>
       </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
         <div class="edit-box-title" id="ce-title">Catalogue</div>
         <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Activez les produits et définissez un prix personnalisé.</p>
         <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none" id="ce-cat-tabs"></div>
@@ -623,6 +638,15 @@ footer span{color:var(--red)}
     <div class="section-head"><div class="section-title">Paramètres</div></div>
     <div class="stat-grid" id="param-stats"></div>
     <div class="settings-grid" style="margin-top:20px">
+      <div class="settings-card"><div class="settings-card-title">🎨 Thème du site</div>
+        <div class="fg"><label class="fl">Apparence</label>
+          <select class="fi" id="theme-select" onchange="setTheme(this.value)">
+            <option value="light">☀️ Thème Clair</option>
+            <option value="dark">🌙 Thème Sombre</option>
+          </select>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:4px">Change l'apparence pour tous les visiteurs.</p>
+      </div>
       <div class="settings-card"><div class="settings-card-title">🔗 Webhook Discord</div>
         <div class="fg"><label class="fl">URL</label><input class="fi" id="p-webhook" type="text"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
@@ -656,6 +680,7 @@ footer span{color:var(--red)}
 <footer>© 2025 <span>LTD Grove Street</span> · Los Santos · Davis · Toujours ouvert</footer>
 
 <!-- CART FLOAT -->
+<button id="theme-toggle" onclick="toggleTheme()" style="position:fixed;bottom:20px;left:20px;z-index:800;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);font-size:18px;cursor:pointer;box-shadow:0 2px 12px var(--shadow);display:flex;align-items:center;justify-content:center;transition:all .2s" title="Changer le thème">🌙</button>
 <button id="cart-float" style="display:none;position:fixed;bottom:20px;right:20px;z-index:800" class="cart-btn" onclick="openOrderMo()">
   🛒 Panier <div class="cart-bubble" id="cart-bubble">0</div>
 </button>
@@ -755,6 +780,7 @@ async function loadDBFromFirebase(){
       DB.adminPassHash = r.adminPassHash ?? DB.adminPassHash;
       DB.webhook       = r.webhook       ?? '';
       DB.orderCount    = r.orderCount    ?? DB.orderCount;
+      if(r.theme)      { DB.theme = r.theme; applyTheme(r.theme); }
       if(r.promos)     DB.promos     = r.promos;
       if(r.products)   DB.products   = Object.values(r.products);
       if(r.catalogues) DB.catalogues = Object.values(r.catalogues);
@@ -791,6 +817,7 @@ async function saveDB(){
   try{ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }catch(e){}
   try{
     await fbSet('db',{
+      theme:         DB.theme||'light',
       adminPassHash: DB.adminPassHash,
       webhook:       DB.webhook,
       orderCount:    DB.orderCount,
@@ -907,141 +934,116 @@ function defaultDB(){
     {id:36,name:"Bac Jardinage",icon:"🌿",desc:"Bac de culture en bois",           price:18,  cat:"jardinage",    img:"",badge:""},
     {id:37,name:"Lumière Violette",icon:"💡",desc:"Lampe UV horticulture",         price:36,  cat:"jardinage",    img:"",badge:"💎"},
   ];
-  // Mots de passe hashés SHA-256 (Web Crypto) — jamais en clair
-  const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-  const hEnt   = 'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644';
-  const hCli   = '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
-  return {
-    adminPassHash: hAdmin,
-    promos:[
-      {icon:'🔧', label:'Cette semaine', title:'Quincaillerie', sub:'-10% sur les outils', color:'#fee2e2', cat:'quincaillerie'},
-      {icon:'🧃', label:'Nouveautés', title:'Quotidien', sub:'Arrivages frais', color:'#dcfce7', cat:'quotidien'},
-      {icon:'🌱', label:'Best-sellers', title:'Jardinage', sub:'Nos indispensables', color:'#fef3c7', cat:'jardinage'},
-    ],
-    // Webhook : stocké uniquement dans localStorage, jamais dans le code source déployé
-    webhook: '',
-    orderCount: 247,
-    products: p,
-    gallery: [],
-    orders: [],
-    catalogues:[
-      {id:'default',name:'Standard',   items:p.map(x=>({id:x.id,enabled:true,cp:null}))},
-      {id:'ent',    name:'Entreprise',items:p.map(x=>({id:x.id,enabled:true,cp:Math.round(x.price*.7)}))},
-    ],
-    users:[
-      {id:1,username:'admin',      passHash:hAdmin, rank:'admin',      rpName:'Admin',        catId:'default'},
-      {id:3,username:'entreprise1',passHash:hEnt,   rank:'entreprise', rpName:'Entreprise 1', catId:'ent'},
-      {id:4,username:'client1',    passHash:hCli,   rank:'client',     rpName:'John Doe',     catId:'default'},
-    ],
-    team:[
-      {id:1,name:"Flash", grade:"CEO",      sub:"Fondateur du LTD",          init:"F",img:""},
-      {id:2,name:"Marco", grade:"MANAGER",  sub:"Responsable des stocks",    init:"M",img:""},
-      {id:3,name:"Sofia", grade:"STAFF",    sub:"Accueil & service client",  init:"S",img:""},
-      {id:4,name:"Tony",  grade:"DELIVERY", sub:"Livraisons express",        init:"T",img:""},
-      {id:5,name:"Lisa",  grade:"FINANCE",  sub:"Gestion financière",        init:"L",img:""},
-      {id:6,name:"Recon", grade:"SECURITY", sub:"Protection du commerce",    init:"R",img:""},
-    ],
-    partners:[
-      {id:1,name:"Fleeca Bank",     icon:"🏦",desc:"Partenaire bancaire officiel",           img:""},
-      {id:2,name:"Maze Bank",       icon:"🏛",desc:"Gestion des comptes entreprise",         img:""},
-      {id:3,name:"Rockford Garage", icon:"🔧",desc:"Entretien de la flotte de livraison",    img:""},
-      {id:4,name:"LS Medical",      icon:"🏥",desc:"Couverture santé des employés",          img:""},
-      {id:5,name:"Radio LS",        icon:"📻",desc:"Publicité radio & sponsoring",            img:""},
-      {id:6,name:"Night Owl",       icon:"🦉",desc:"Partenaire bars & boissons",             img:""},
-      {id:7,name:"Horny's",         icon:"🍔",desc:"Partenaire restauration officiel",       img:""},
-    ],
-    reviews:[],
-  };
-}
-
-let DB=(()=>{
-  try{
-    const r=localStorage.getItem(DB_KEY);
-    if(!r)return defaultDB();
-    const saved=JSON.parse(r);
-    const def=defaultDB();
-    return {
-      adminPassHash: saved.adminPassHash  ?? def.adminPassHash,
-      webhook:       saved.webhook        ?? '',
-      orderCount:    saved.orderCount     ?? def.orderCount,
-      gallery:       saved.gallery        ?? [],
-      orders:        saved.orders         ?? [],
-      products:      (saved.products&&saved.products.length)    ? saved.products    : def.products,
-      catalogues:    (saved.catalogues&&saved.catalogues.length)? saved.catalogues  : def.catalogues,
-      users:         (saved.users&&saved.users.length)          ? saved.users       : def.users,
-      team:          (saved.team&&saved.team.length)            ? saved.team        : def.team,
-      partners:      (saved.partners&&saved.partners.length)    ? saved.partners    : def.partners,
-      reviews:       saved.reviews ?? [],
-    };
-  }catch(e){return defaultDB();}
-})();
-
-// saveDB() → remplacée par version Firebase async ci-dessus
-function nid(a){return a.length?Math.max(...a.map(x=>x.id||0))+1:1;}
-
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
-let CU=null, cart={}, revR=0, cmdCatTab=null, adminCECat='quincaillerie';
-let eProd=null, eUser=null, eTeam=null, ePart=null, eGal=null, lbIdx=0;
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',()=>{
-  goPage('home');
-  loadDBFromFirebase();
-});
-
-// ══════════════════════════════════════════════
-//  TICKER
-// ══════════════════════════════════════════════
-function buildTicker(){ renderPromos(); }
-
-function renderPromos(){
-  if(!DB.promos) return;
-  DB.promos.forEach((p,i)=>{
-    const el=document.getElementById('pb-'+i);
-    if(!el)return;
-    el.innerHTML=`
-      <div class="pb-icon" style="background:${p.color||'#f4f4f4'}">${p.icon||'📦'}</div>
-      <div>
-        <div class="pb-label">${p.label||''}</div>
-        <div class="pb-title">${p.title||''}</div>
-        <div class="pb-sub">${p.sub||''}</div>
-      </div>
-      <div class="pb-arrow">›</div>
-    `;
-    el.onclick=()=>{ if(p.cat){ cmdCatTab=p.cat; } goPage('commander'); };
-  });
-}
-
-// ══════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════
-function goPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
-  const pg=document.getElementById('page-'+id); if(!pg)return;
-  pg.classList.add('active');
-  const tab=document.querySelector(`.ctab[data-page="${id}"]`);
-  if(tab)tab.classList.add('active');
-  window.scrollTo(0,0);
-  if(id==='commander') renderCommander();
-  if(id==='home') renderHomeGrid();
-  if(id==='team')      renderTeamPage();
-  if(id==='partners')  renderPartnersPage();
-  if(id==='galerie')   renderGalerie();
-  if(id==='reviews')   renderReviews();
-  if(id==='settings'){ if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;} renderSettings(); }
-  if(id==='admin'){    if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;} renderAdmin(); }
-  setTimeout(initObs,80);
-}
-
-// ══════════════════════════════════════════════
-//  AUTH — Mots de passe hashés
-// ══════════════════════════════════════════════
-const ALLOWED=['entreprise','admin','staff'];
+const hAdmin = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+const hEnt   = 'c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644';
+const hCli   = '186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
+const p=[
+  // JARDINAGE
+  {id:1, name:'Fertilisant',        cat:'jardinage',      icon:'🌱', desc:'Booste la croissance de vos plantes.',        price:10,  img:'https://i.postimg.cc/SQnxv0pV/91BPwn-XWpu-L-AC-UF1000-1000-QL80.jpg', badge:''},
+  {id:2, name:'Pot de Fleur',       cat:'jardinage',      icon:'🪴', desc:'Pour cultiver en beauté.',                     price:10,  img:'https://i.postimg.cc/pTXt8jPs/339427-010.jpg', badge:''},
+  {id:3, name:'Table',              cat:'jardinage',      icon:'🪑', desc:'Solide et pratique pour votre espace.',        price:10,  img:'https://i.postimg.cc/4dqsgdTH/table.jpg', badge:''},
+  {id:4, name:'Terre',              cat:'jardinage',      icon:'🌿', desc:'De la bonne terre pour faire pousser.',        price:12,  img:'https://i.postimg.cc/zG7Nfpr3/terre.jpg', badge:''},
+  {id:5, name:'Bac de jardinage',   cat:'jardinage',      icon:'🌿', desc:'Grand format pour les projets ambitieux.',     price:20,  img:'https://i.postimg.cc/nzybWPv6/shopping.webp', badge:''},
+  {id:6, name:'Lumière violette',   cat:'jardinage',      icon:'💡', desc:'Idéale pour faire pousser en intérieur.',      price:36,  img:'https://i.postimg.cc/7ZHvj72y/lumiere-eclairage-noire-fluo.png', badge:'💎'},
+  {id:7, name:'Cisaille',           cat:'jardinage',      icon:'✂️', desc:'Coupe net, coupe propre.',                     price:1500,img:'https://i.postimg.cc/t4w8Fngb/image-2026-04-30-222857736.png', badge:'RARE'},
+  // NOUVEAUTÉ
+  {id:8, name:'Rose',               cat:'nouveaute',      icon:'🌹', desc:'Une rose fraîche, livrée avec soin.',          price:155, img:'https://i.postimg.cc/P570F7bz/rose.jpg', badge:'NEW'},
+  {id:9, name:'Bouquet de Roses',   cat:'nouveaute',      icon:'💐', desc:'Un bouquet qui en dit plus que les mots.',     price:450, img:'https://i.postimg.cc/nz45rcy1/rose-bou.jpg', badge:'NEW'},
+  {id:10,name:'Bouquet de Fleurs',  cat:'nouveaute',      icon:'🌸', desc:'Un bouquet coloré pour marquer les esprits.',  price:150, img:'https://i.postimg.cc/rsgPGZF4/telecharge.jpg', badge:'NEW'},
+  {id:11,name:'Rose éternelle',     cat:'nouveaute',      icon:'🌹', desc:'Elle ne fane jamais. Un cadeau pour toujours.',price:305, img:'https://i.postimg.cc/xTT7jQtB/63127-H-00-3P-HAUPTBILD-WS-3P-FR.jpg', badge:'💎'},
+  {id:12,name:'BMX 2 Places',       cat:'nouveaute',      icon:'🚲', desc:'Pour rider à deux dans les rues.',             price:500, img:'https://i.postimg.cc/fR1gv9DT/royal-factory.png', badge:'NEW'},
+  {id:13,name:'Doudou Pingouin',    cat:'nouveaute',      icon:'🐧', desc:'Un peu de douceur dans ce monde de brutes.',   price:600, img:'https://i.postimg.cc/Vvs7N9BX/telecharge-(1).jpg', badge:'NEW'},
+  {id:14,name:'Anneau',             cat:'nouveaute',      icon:'💍', desc:'Le symbole ultime, forgé pour durer.',          price:4500,img:'https://i.postimg.cc/TYw7M9PT/telecharge-(2).jpg', badge:'💎'},
+  {id:15,name:'Anneau de Mariage',  cat:'nouveaute',      icon:'💍', desc:'Pour sceller les liens les plus précieux.',     price:4000,img:'https://i.postimg.cc/Vs4GVTm4/telecharge-(3).jpg', badge:'💎'},
+  // QUINCAILLERIE
+  {id:16,name:'Pile Verte',         cat:'quincaillerie',  icon:'🔋', desc:'Petite pile, grande autonomie.',               price:3,   img:'https://i.postimg.cc/Lswd5T4R/image-2026-04-30-174330077.png', badge:''},
+  {id:17,name:'Outils',             cat:'quincaillerie',  icon:'🔧', desc:'Le kit de base indispensable.',                price:6,   img:'https://i.postimg.cc/vDR4b9jC/image-2026-04-30-172314805.png', badge:''},
+  {id:18,name:'Perceuse',           cat:'quincaillerie',  icon:'🪛', desc:'Compacte et efficace pour tous vos perçages.', price:10,  img:'https://i.postimg.cc/W47g89K6/image-2026-04-30-172145766.png', badge:''},
+  {id:19,name:'Grosse Perceuse',    cat:'quincaillerie',  icon:'🔩', desc:'Pour les gros travaux, elle ne lâche pas.',    price:14,  img:'https://i.postimg.cc/6q49fxNg/image-2026-04-30-222100571.png', badge:''},
+  {id:20,name:'Pince coupante',     cat:'quincaillerie',  icon:'✂️', desc:'Coupe fils et câbles avec précision.',         price:16,  img:'https://i.postimg.cc/DfRsk2mF/image-2026-04-30-222113181.png', badge:''},
+  {id:21,name:'Pince pour plaque',  cat:'quincaillerie',  icon:'🪝', desc:'Indispensable pour la pose de plaques.',       price:24,  img:'https://i.postimg.cc/qvxC3yw7/image-2026-04-30-222141464.png', badge:''},
+  {id:22,name:'Perceuse manuelle',  cat:'quincaillerie',  icon:'☯️', desc:'Simple, fiable, sans batterie à charger.',     price:14,  img:'https://i.postimg.cc/BQxjrHdT/image-2026-04-30-222250377.png', badge:''},
+  {id:23,name:'Foret de Perceuse',  cat:'quincaillerie',  icon:'🗜️', desc:'Perce dans le béton comme dans du beurre.',    price:800, img:'https://i.postimg.cc/6Q8rdwD7/foret.jpg', badge:'RARE'},
+  // ENTRETIEN
+  {id:24,name:'Bicarbonate',        cat:'entretien',      icon:'🧂', desc:'Le produit miracle pour nettoyer tout.',       price:2,   img:'https://i.postimg.cc/QMG9fxJS/bicarbonate-de-soude-pajo-x-1-kg.png', badge:''},
+  {id:25,name:'Caoutchouc',         cat:'entretien',      icon:'⚫', desc:'Polyvalent et durable.',                       price:5,   img:'https://i.postimg.cc/SRBkmjsB/caoutch.jpg', badge:''},
+  {id:26,name:'Huile',              cat:'entretien',      icon:'🫙', desc:'Lubrifie et protège vos mécaniques.',          price:8,   img:'https://i.postimg.cc/h4y0pTzM/HUILE-LUBRIFIANT-HOME-SITE-INTERNET-3-870x500-1.jpg', badge:''},
+  {id:27,name:'Huile Noire',        cat:'entretien',      icon:'🛢️', desc:'Haute viscosité pour les moteurs exigeants.',  price:16,  img:'https://i.postimg.cc/kgrp9zNQ/0a3cf9d1-a892-4403-a3f6-75f32dfdb1d4.png', badge:''},
+  {id:28,name:'Huile Jaune',        cat:'entretien',      icon:'💛', desc:'Qualité premium pour une protection maximale.',price:12,  img:'https://i.postimg.cc/N0wyNzsJ/image-2026-05-25-201103260.png', badge:''},
+  {id:29,name:'Batterie de voiture',cat:'entretien',      icon:'🔌', desc:'Recharge rapide, longue durée de vie.',        price:20,  img:'https://i.postimg.cc/ZnsFnBym/4a9ab44b-e423-4527-b016-d241c9ee246f.png', badge:'TOP'},
+  {id:30,name:'Kit de Nettoyage',   cat:'entretien',      icon:'🧹', desc:'Tout ce qu'il faut pour un véhicule impeccable.',price:80,img:'https://i.postimg.cc/9Mpsxpsg/81TWN3Gp-Ur-L-AC-SY300-SX300-QL70-ML2.jpg', badge:''},
+  {id:31,name:'Batterie',           cat:'entretien',      icon:'🔋', desc:'Petite batterie, fiable et rechargeable.',     price:10,  img:'https://i.postimg.cc/VN5w02TN/caef57df-3628-4717-8492-403be62c627b.png', badge:''},
+  // PAPETERIE
+  {id:32,name:'Colle',              cat:'papeterie',      icon:'🧴', desc:'Colle forte, sèche vite, tient longtemps.',    price:3,   img:'https://i.postimg.cc/282fYL6y/image-2026-05-01-173941868.png', badge:''},
+  {id:33,name:'Sachet vide',        cat:'papeterie',      icon:'🛍️', desc:'Pour conditionner et transporter discrètement.',price:6,  img:'https://i.postimg.cc/HLznDhbr/image-2026-05-01-170816343.png', badge:''},
+  {id:34,name:'Encre',              cat:'papeterie',      icon:'🖊️', desc:'Noire et intense, pour une impression parfaite.',price:6, img:'https://i.postimg.cc/pV59px8H/image-2026-05-01-173651354.png', badge:''},
+  {id:35,name:'Porte Document',     cat:'papeterie',      icon:'📁', desc:'Garde vos papiers importants en sécurité.',    price:10,  img:'https://i.postimg.cc/PJgrQsnR/image-2026-05-01-170839737.png', badge:''},
+  {id:36,name:'Porte Feuille',      cat:'papeterie',      icon:'👛', desc:'Slim et solide, pour vos essentiels.',          price:10,  img:'https://i.postimg.cc/MpSfC4nR/image-2026-05-01-173612238.png', badge:''},
+  {id:37,name:'Trousseau de clés',  cat:'papeterie',      icon:'🔑', desc:'Organisez vos clés avec style.',               price:100, img:'https://i.postimg.cc/jjygsBXM/image-2026-05-01-174207296.png', badge:''},
+  // QUOTIDIEN
+  {id:38,name:'Papier à rouler',    cat:'quotidien',      icon:'📜', desc:'Pour les amateurs de l'authentique.',         price:2,   img:'https://i.postimg.cc/XJWJT0ZN/image-2026-05-01-165904327.png', badge:''},
+  {id:39,name:'Carte SIM',          cat:'quotidien',      icon:'📱', desc:'Connexion instantanée, partout dans la ville.',price:10,  img:'https://i.postimg.cc/RVxBdTHx/image-2026-05-01-170231784.png', badge:''},
+  {id:40,name:'Appât',              cat:'quotidien',      icon:'🪱', desc:'L'appât parfait pour ferrer du gros.',         price:8,   img:'https://i.postimg.cc/6p9NJ5cV/image-2026-05-01-170243446.png', badge:''},
+  {id:41,name:'Élastique',          cat:'quotidien',      icon:'🪢', desc:'Toujours utile, toujours là.',                  price:20,  img:'https://i.postimg.cc/Z5VzTtD9/image-2026-05-01-170253539.png', badge:''},
+  {id:42,name:'Ticket à gratter',   cat:'quotidien',      icon:'🎫', desc:'Tente ta chance, tu sais jamais.',             price:30,  img:'https://i.postimg.cc/mD1vNcZr/image-2026-05-01-170308340.png', badge:''},
+  {id:43,name:'Post it',            cat:'quotidien',      icon:'📌', desc:'Note tout, oublie rien.',                       price:50,  img:'https://i.postimg.cc/KjnCwdMb/image-2026-05-01-170319398.png', badge:''},
+  {id:44,name:'Carte SD',           cat:'quotidien',      icon:'💾', desc:'Stocke plus, efface moins.',                   price:40,  img:'https://i.postimg.cc/yYywPCK3/image-2026-05-01-170331082.png', badge:''},
+  {id:45,name:'Ballon de Football', cat:'quotidien',      icon:'⚽', desc:'Pour les matchs qui comptent vraiment.',       price:50,  img:'https://i.postimg.cc/W1pxYYbR/image-2026-05-01-170342020.png', badge:''},
+  {id:46,name:'Ballon de Basket',   cat:'quotidien',      icon:'🏀', desc:'Rebond parfait, prise en main irréprochable.', price:50,  img:'https://i.postimg.cc/s2q8XVPQ/image-2026-05-01-170358694.png', badge:''},
+  {id:47,name:'Canne à pêche',      cat:'quotidien',      icon:'🎣', desc:'Légère et solide pour des heures au bord.',    price:64,  img:'https://i.postimg.cc/ZKHMNPP6/image-2026-05-01-170429276.png', badge:''},
+  {id:48,name:'Skate',              cat:'quotidien',      icon:'🛹', desc:'Quatre roues pour conquérir les rues.',         price:100, img:'https://i.postimg.cc/wByfnSCh/image-2026-05-01-170443609.png', badge:''},
+  {id:49,name:'Téléphone Basique',  cat:'quotidien',      icon:'📞', desc:'Simple, solide, ça appelle et ça tient.',      price:120, img:'https://i.postimg.cc/BnTQ2nZz/image-2026-05-01-173510078.png', badge:''},
+  {id:50,name:'Palette de maquillage',cat:'quotidien',    icon:'💄', desc:'Toutes les couleurs pour se réinventer.',       price:165, img:'https://i.postimg.cc/nh6Y9MWS/image-2026-05-01-170533247.png', badge:''},
+  {id:51,name:'BMX',                cat:'quotidien',      icon:'🚲', desc:'Pour rider dans les rues sans se faire remarquer.',price:300,img:'https://i.postimg.cc/fy2YzbX3/image-2026-05-01-170545538.png', badge:'🔥'},
+  {id:52,name:'Téléphone',          cat:'quotidien',      icon:'📱', desc:'Puissant, rapide, toujours connecté.',         price:250, img:'https://i.postimg.cc/FzRJBQqk/image-2026-05-01-170637830.png', badge:''},
+  {id:53,name:'Doudou',             cat:'quotidien',      icon:'🧸', desc:'Un peu de douceur dans ce monde de brutes.',   price:600, img:'https://i.postimg.cc/ZKgywnS0/image-2026-05-01-173300004.png', badge:''},
+  {id:54,name:'Appareil Photo',     cat:'quotidien',      icon:'📷', desc:'Capture chaque moment comme un pro.',          price:700, img:'https://i.postimg.cc/1tRg8QyM/image-2026-05-01-170712197.png', badge:''},
+  {id:55,name:'Galaxy',             cat:'quotidien',      icon:'📱', desc:'Le flagship pour ceux qui veulent le meilleur.',price:870,img:'https://i.postimg.cc/x8ccP3J1/image-2026-05-01-170730475.png', badge:'TOP'},
+  {id:56,name:'Tablette',           cat:'quotidien',      icon:'📲', desc:'Grand écran, grande puissance.',               price:1260,img:'https://i.postimg.cc/0jFrXKDY/image-2026-05-01-170737827.png', badge:''},
+  {id:57,name:'Éponge',             cat:'quotidien',      icon:'🧽', desc:'Spéciale tags, absorption totale.',             price:1400,img:'https://i.postimg.cc/66m7pggh/image-2026-05-01-170750796.png', badge:'RARE'},
+  {id:58,name:'Spray Tag',          cat:'quotidien',      icon:'🎨', desc:'La couleur qui marque les esprits et les murs.',price:2500,img:'https://i.postimg.cc/nLprWJjN/image-2026-05-01-170807147.png', badge:'💎 RARE'},
+  // ALIMENTAIRE
+  {id:59,name:'Café',               cat:'alimentaire',    icon:'☕', desc:'Chaud, fort, prêt à te lancer dans la journée.',price:30, img:'https://i.postimg.cc/T33NKtM7/image-2026-05-25-200642532.png', badge:''},
+  {id:60,name:'Crème glacée',       cat:'alimentaire',    icon:'🍦', desc:'Fraîche et crémeuse, parfaite.',               price:2,   img:'https://i.postimg.cc/JhV9DxZj/image-2026-05-01-072013256.png', badge:''},
+  {id:61,name:'Pot Crème glacée',   cat:'alimentaire',    icon:'🍨', desc:'Le grand format pour partager ou pas.',        price:2,   img:'https://i.postimg.cc/CLRtcX4B/image-2026-05-01-072049084.png', badge:''},
+  {id:62,name:'Crème Fraîche',      cat:'alimentaire',    icon:'🥛', desc:'Onctueuse et naturelle, elle relève tout.',    price:2,   img:'https://i.postimg.cc/d0w5cxGz/image-2026-05-01-072303805.png', badge:''},
+  {id:63,name:'Cola',               cat:'alimentaire',    icon:'🥤', desc:'La classique qui désaltère comme il faut.',    price:4,   img:'https://i.postimg.cc/1R8hd8mX/image-2026-05-01-072320710.png', badge:''},
+  {id:64,name:'Moutarde',           cat:'alimentaire',    icon:'🌭', desc:'Du piquant pour ceux qui savent.',             price:2,   img:'https://i.postimg.cc/2jbMwgG6/image-2026-05-01-072519206.png', badge:''},
+  {id:65,name:'Coquille à tacos',   cat:'alimentaire',    icon:'🌮', desc:'Croustillante à souhait pour vos tacos.',      price:2,   img:'https://i.postimg.cc/8CznrYsc/image-2026-05-01-072610280.png', badge:''},
+  {id:66,name:'Tortilla',           cat:'alimentaire',    icon:'🫓', desc:'Souple et généreuse, elle enroule tout.',      price:2,   img:'https://i.postimg.cc/gj8MWFtT/image-2026-05-01-072648240.png', badge:''},
+  {id:67,name:'Bouteille eau',      cat:'alimentaire',    icon:'💧', desc:'Hydratation pure, indispensable.',             price:10,  img:'https://i.postimg.cc/Hs0Svmyb/image-2026-05-01-072720496.png', badge:''},
+  {id:68,name:'Bonbon cola',        cat:'alimentaire',    icon:'🍬', desc:'Le goût cola en version pocket.',              price:8,   img:'https://i.postimg.cc/BQfX9426/image-2026-05-01-154350220.png', badge:''},
+  {id:69,name:'Bonbon tada',        cat:'alimentaire',    icon:'🍭', desc:'Une surprise à chaque bouchée.',               price:8,   img:'https://i.postimg.cc/pdrdYTMr/image-2026-05-01-154412787.png', badge:''},
+  {id:70,name:'Bonbon Drag',        cat:'alimentaire',    icon:'🍬', desc:'Petits mais intenses.',                         price:8,   img:'https://i.postimg.cc/0N4yts8R/image-2026-05-01-154425241.png', badge:''},
+  {id:71,name:'Bonbon',             cat:'alimentaire',    icon:'🍬', desc:'Le classique qui fait toujours plaisir.',      price:8,   img:'https://i.postimg.cc/9F2Fg1jD/image-2026-05-01-154444634.png', badge:''},
+  {id:72,name:'Barre choco caramel',cat:'alimentaire',    icon:'🍫', desc:'Chocolat et caramel, le combo gagnant.',       price:18,  img:'https://i.postimg.cc/wxX9NJRF/image-2026-05-01-154516834.png', badge:''},
+  {id:73,name:'Barre chocolatée',   cat:'alimentaire',    icon:'🍫', desc:'L'énergie du chocolat quand il le faut.',     price:18,  img:'https://i.postimg.cc/XYJWtz1v/image-2026-05-01-154543045.png', badge:''},
+  {id:74,name:'Baguette',           cat:'alimentaire',    icon:'🥖', desc:'Fraîche du jour, croustillante.',              price:20,  img:'https://i.postimg.cc/cHqNg4s9/image-2026-05-01-154558977.png', badge:''},
+  {id:75,name:'Pistache',           cat:'alimentaire',    icon:'🌰', desc:'Salées et grillées, impossibles à arrêter.',   price:8,   img:'https://i.postimg.cc/wMg82fsp/image-2026-05-01-154612989.png', badge:''},
+  {id:76,name:'Noix cajou',         cat:'alimentaire',    icon:'🥜', desc:'Douces et croquantes, le snack parfait.',      price:8,   img:'https://i.postimg.cc/Mpvk9jXf/image-2026-05-01-154636824.png', badge:''},
+  {id:77,name:'Brique citron',      cat:'alimentaire',    icon:'🍋', desc:'L'acidité qui réveille, format pratique.',    price:16,  img:'https://i.postimg.cc/XJ6TNHLX/image-2026-05-01-154650676.png', badge:''},
+  {id:78,name:'Noix',               cat:'alimentaire',    icon:'🌰', desc:'Naturelles et nourrissantes.',                 price:8,   img:'https://i.postimg.cc/vHZCm6rx/image-2026-05-01-154709389.png', badge:''},
+  {id:79,name:'Mini menu',          cat:'alimentaire',    icon:'🍱', desc:'Un petit creux ? Le mini menu règle ça.',      price:40,  img:'https://i.postimg.cc/MTVdC4Vj/image-2026-05-25-200708257.png', badge:''},
+  {id:80,name:'Menu découverte',    cat:'alimentaire',    icon:'🍽️', desc:'Un repas complet pour découvrir nos spécialités.',price:90,img:'https://i.postimg.cc/Hkj72HMh/image-2026-05-01-165749911.png', badge:''},
+  {id:81,name:'Menu festin',        cat:'alimentaire',    icon:'🎉', desc:'Le grand menu pour les grandes occasions.',    price:120, img:'https://i.postimg.cc/MTJMqQFN/image-2026-05-01-165812720.png', badge:'🔥'},
+  {id:82,name:'Hérisson',           cat:'alimentaire',    icon:'🦔', desc:'Petit prix, grand goût.',                      price:2,   img:'https://i.postimg.cc/VNSwDszn/image-2026-05-01-173911638.png', badge:''},
+  // POWER
+  {id:83,name:'Pancakes Protéines', cat:'power',          icon:'🥞', desc:'Le petit déj des champions.',                  price:14,  img:'https://i.postimg.cc/85nxZ1Cb/pancakes-prote-ine-s-a-la-whey-sans-sucre.jpg', badge:''},
+  {id:84,name:'Whey fraise',        cat:'power',          icon:'🍓', desc:'Saveur fraise intense pour la récup.',         price:8,   img:'https://i.postimg.cc/L8g1Qv8J/c55c00ee-c4bf-4de7-bc9b-8fe4fae0c7a9.png', badge:''},
+  {id:85,name:'Whey zero',          cat:'power',          icon:'⚡', desc:'Zéro sucre, 100% performance.',                price:8,   img:'https://i.postimg.cc/yYbRT2s4/91c840cc-9abe-45e6-9829-ef43cbee3ad7.png', badge:''},
+  {id:86,name:'Protéine Muscle2000',cat:'power',          icon:'💪', desc:'La formule pro pour des gains sérieux.',       price:20,  img:'https://i.postimg.cc/sDXS73Fv/29a45aae-1253-43c9-a804-5210bdcce367.png', badge:'TOP'},
+  {id:87,name:'Pure Whey',          cat:'power',          icon:'🥛', desc:'Protéine pure, sans compromis.',               price:4,   img:'https://i.postimg.cc/BbZFh0jW/c33e33cd-929c-40a6-b463-57a29d72e666.png', badge:''},
+  {id:88,name:'Whey Gold',          cat:'power',          icon:'🥇', desc:'Le gold standard de la whey.',                 price:10,  img:'https://i.postimg.cc/Zq36nHGD/edbbcaba-2594-4d1d-93a8-068b17f8d08a.png', badge:'💎'},
+  {id:89,name:'Barre énergétique',  cat:'power',          icon:'🍫', desc:'L'énergie instantanée pour tenir la distance.',price:4,  img:'https://i.postimg.cc/wj1X8g0x/ffd18f1e-0701-4c8f-8901-00f8b3d410b8.png', badge:''},
+  {id:90,name:'Protéine Energy',    cat:'power',          icon:'⚡', desc:'Protéines + boost d'énergie.',                price:4,   img:'https://i.postimg.cc/02WYBbGB/daedbc28-7d2b-4a32-9066-06929d60e114.png', badge:''},
+  {id:91,name:'Boisson énergétique',cat:'power',          icon:'🥤', desc:'Recharge rapide avant l'effort.',             price:4,   img:'https://i.postimg.cc/4NNvPzcV/d74c56de-73f5-4dc6-95cb-034b61df7362.png', badge:''},
+  {id:92,name:'Milkshake protéine', cat:'power',          icon:'🥤', desc:'Onctueux, savoureux et blindé de protéines.',  price:4,   img:'https://i.postimg.cc/5NddF2Fb/35788710-ad50-4945-b6d6-71b446e9811d.png', badge:''},
+  // CBD
+  {id:93,name:'Sucette CBD',        cat:'cbd',            icon:'🍭', desc:'Douce, fruitée, et relaxante.',                price:16,  img:'https://i.postimg.cc/nc7P8XKB/image-2026-05-25-195508059.png', badge:''},
+  {id:94,name:'Cookie CBD',         cat:'cbd',            icon:'🍪', desc:'Croustillant à souhait, avec la touche CBD.',  price:20,  img:'https://i.postimg.cc/k5M1tw0Z/image-2026-05-25-195539417.png', badge:''},
+  {id:95,name:'Chillma',            cat:'cbd',            icon:'😌', desc:'Le produit détente par excellence.',            price:20,  img:'https://i.postimg.cc/HxRBRmVP/image-2026-05-25-195602202.png', badge:''},
+  {id:96,name:'Joint de CBD',       cat:'cbd',            icon:'🌿', desc:'100% CBD, roulé proprement.',                  price:20,  img:'https://i.postimg.cc/vBZ5zNXw/image-2026-05-25-202116941.png', badge:''},
+];
 function canOrder(u){return u&&ALLOWED.includes(u.rank);}
 
 function openLogin(){openOv('login-ov');setTimeout(()=>document.getElementById('l-user').focus(),120);}
@@ -1133,11 +1135,15 @@ function renderCommander(){
   });
   window._uProds=uProds;
   const cats=[
+    {id:"jardinage",    label:"Jardinage",    icon:"🌱"},
+    {id:"nouveaute",    label:"Nouveauté",    icon:"🆕"},
     {id:"quincaillerie",label:"Quincaillerie",icon:"🔧"},
-    {id:"quotidien",    label:"Quotidien",    icon:"🧃"},
     {id:"entretien",    label:"Entretien",    icon:"🛢️"},
     {id:"papeterie",    label:"Papeterie",    icon:"📋"},
-    {id:"jardinage",    label:"Jardinage",    icon:"🌱"},
+    {id:"quotidien",    label:"Quotidien",    icon:"🛍️"},
+    {id:"alimentaire",  label:"Alimentaire",  icon:"🍎"},
+    {id:"power",        label:"Power",        icon:"💪"},
+    {id:"cbd",          label:"CBD",          icon:"🌿"},
   ];
   const avail=cats.filter(c=>uProds.some(p=>p.cat===c.id));
   if(!cmdCatTab||!avail.find(c=>c.id===cmdCatTab))cmdCatTab=avail[0]?.id;
@@ -1388,7 +1394,7 @@ function deleteCat(){
   if(id==='default'){ntf('Impossible de supprimer le catalogue par défaut',true);return;}
   askConfirm('Supprimer ce catalogue ?',()=>{DB.catalogues=DB.catalogues.filter(c=>c.id!==id);DB.users.forEach(u=>{if(u.catId===id)u.catId='default';});saveDB();populateCESel();renderCE();ntf('Supprimé');});
 }
-function renderCE(){const id=document.getElementById('ce-sel').value;const cat=DB.catalogues.find(c=>c.id===id);if(!cat)return;document.getElementById('ce-title').textContent='📦 '+cat.name;const defs=[{id:"quincaillerie",l:"Quincaillerie",i:"🔧"},{id:"quotidien",l:"Quotidien",i:"🧃"},{id:"entretien",l:"Entretien",i:"🛢️"},{id:"papeterie",l:"Papeterie",i:"📋"},{id:"jardinage",l:"Jardinage",i:"🌱"}];document.getElementById('ce-cat-tabs').innerHTML=defs.map(d=>`<button class="cetab${d.id===adminCECat?' active':''}" onclick="switchCECat('${d.id}',this)">${d.i} ${d.l}</button>`).join('');renderPTog(cat);}
+function renderCE(){const id=document.getElementById('ce-sel').value;const cat=DB.catalogues.find(c=>c.id===id);if(!cat)return;document.getElementById('ce-title').textContent='📦 '+cat.name;const defs=[{id:"jardinage",l:"Jardinage",i:"🌱"},{id:"nouveaute",l:"Nouveauté",i:"🆕"},{id:"quincaillerie",l:"Quincaillerie",i:"🔧"},{id:"entretien",l:"Entretien",i:"🛢️"},{id:"papeterie",l:"Papeterie",i:"📋"},{id:"quotidien",l:"Quotidien",i:"🛍️"},{id:"alimentaire",l:"Alimentaire",i:"🍎"},{id:"power",l:"Power",i:"💪"},{id:"cbd",l:"CBD",i:"🌿"}];document.getElementById('ce-cat-tabs').innerHTML=defs.map(d=>`<button class="cetab${d.id===adminCECat?' active':''}" onclick="switchCECat('${d.id}',this)">${d.i} ${d.l}</button>`).join('');renderPTog(cat);}
 function switchCECat(cat,btn){adminCECat=cat;document.querySelectorAll('.cetab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const id=document.getElementById('ce-sel').value;const c=DB.catalogues.find(x=>x.id===id);if(c)renderPTog(c);}
 function renderPTog(cat){
   const prods=DB.products.filter(p=>p.cat===adminCECat);
@@ -1500,7 +1506,7 @@ function renderGalAdmin(){
   if(!DB.gallery.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Aucune photo. Ajoutez-en avec le bouton ➕</div>';return;}
   const gadm=document.getElementById('gal-admin-grid');
   gadm.innerHTML=DB.gallery.map((g,i)=>`
-    <div style="background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden">
       <img src="${g.img}" alt="" style="width:100%;height:110px;object-fit:cover">
       <div style="padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
         <span style="font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.title||'Sans titre'}</span>
@@ -1547,7 +1553,7 @@ async function changePass(){
 function renderPromoAdmin(){
   if(!DB.promos)DB.promos=[{icon:'📦',label:'',title:'',sub:'',color:'#f4f4f4',cat:''},...Array(2).fill({icon:'📦',label:'',title:'',sub:'',color:'#f4f4f4',cat:''})];
   document.getElementById('promo-edit-list').innerHTML=DB.promos.map((p,i)=>`
-    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:12px">
       <div style="font-size:14px;font-weight:800;margin-bottom:14px">Bannière ${i+1}</div>
       <div class="form-row form-3">
         <div class="fg"><label class="fl">Émoji / Icône</label><input class="fi" id="promo-icon-${i}" type="text" value="${p.icon||''}" maxlength="4"></div>
@@ -1609,6 +1615,7 @@ function resetDB(){askConfirm('⚠️ Réinitialiser TOUTE la base ? Irréversib
 // ══════════════════════════════════════════════
 function renderSettings(){
   document.getElementById('p-webhook').value=DB.webhook;
+  applyTheme(DB.theme||'light');
   document.getElementById('p-webhook-status').textContent='';
   const stats=[
     {label:'Commandes totales', val:DB.orderCount,       color:'var(--green)'},
@@ -1712,6 +1719,34 @@ function initObs(){const o=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isI
 // ══════════════════════════════════════════════
 //  REFRESH HOME STATS — centralisé
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  THÈME
+// ══════════════════════════════════════════════
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = t==='dark' ? '☀️' : '🌙';
+  // Aussi dans les paramètres
+  const sel = document.getElementById('theme-select');
+  if(sel) sel.value = t;
+}
+
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme')||'light';
+  const next = current==='dark'?'light':'dark';
+  DB.theme = next;
+  applyTheme(next);
+  saveDB();
+  ntf(next==='dark'?'🌙 Thème sombre activé':'☀️ Thème clair activé');
+}
+
+function setTheme(t){
+  DB.theme=t;
+  applyTheme(t);
+  saveDB();
+  ntf(t==='dark'?'🌙 Thème sombre':'☀️ Thème clair');
+}
+
 function refreshHomeStats(animated=false){
   const orders  = DB.orderCount;
   const prods   = DB.products.length;

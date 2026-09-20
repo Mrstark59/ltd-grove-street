@@ -549,7 +549,7 @@ function hQ(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i
 // ── DB ──
 const DB_KEY='ltd_gs_v4';
 function defDB(){
-  const hA= + hA + ,hE= + hE + ,hC= + hC + ;
+  const hA='240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',hE='c7699e56b753b5fe782b724f2a7074054d88eee7ce3e9ae5d308c5d73f8b1644',hC='186474c1f2c2f735a54c2cf82ee8e87f2a5cd30940e280029363fecedfc5328c';
   return {
     theme:'dark',adminPassHash:hA,webhook:'',orderCount:0,
     products:[],gallery:[],orders:[],reviews:[],
@@ -611,7 +611,7 @@ async function saveDB(){
       theme:DB.theme||'dark',adminPassHash:DB.adminPassHash,webhook:DB.webhook,orderCount:DB.orderCount,
       promos:DB.promos,prodCats:DB.prodCats,
       products:DB.products.length?toObj(DB.products):{},
-      catalogues:DB.catalogues.reduce((o,c)=>{o[c.id]=c;return o;}),
+      catalogues:DB.catalogues.reduce((o,c)=>{o[c.id]=c;return o;},{}),
       users:toObj(DB.users),team:DB.team.length?toObj(DB.team):{},
       partners:DB.partners.length?toObj(DB.partners):{},
       gallery:DB.gallery.length?toObj(DB.gallery.map((g,i)=>({...g,id:g.id??i+1}))):{},

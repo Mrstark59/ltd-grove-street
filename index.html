@@ -302,7 +302,7 @@ footer span{color:var(--red)}
 <div class="cnav-wrap">
   <div class="cnav" id="cnav" onscroll="updScroll()">
     <button class="ctab active" data-page="home"      onclick="goPage('home')">🏠 Accueil</button>
-    <button class="ctab"        data-page="commander" onclick="goPage('commander')">🛒 Commander</button>
+    <button class="ctab"        data-page="commander" onclick="goPage(\'commander\')">"🛒 Commander</button>
     <button class="ctab"        data-page="team"      onclick="goPage('team')">👥 Équipe</button>
     <button class="ctab"        data-page="partners"  onclick="goPage('partners')">🤝 Partenaires</button>
     <button class="ctab"        data-page="galerie"   onclick="goPage('galerie')">📸 Galerie</button>
@@ -327,7 +327,7 @@ footer span{color:var(--red)}
         <div><div class="hs-n ylw" id="hrevs">0</div><div class="hs-l">Avis clients</div></div>
       </div>
       <div class="hero-btns">
-        <button class="hbtn-p" onclick="goPage('commander')">🛒 Commander</button>
+        <button class="hbtn-p" onclick="goPage(\'commander\')">"🛒 Commander</button>
         <button class="hbtn-s" onclick="goPage('team')">👥 Notre équipe</button>
         <button class="hbtn-s" onclick="goPage('galerie')">📸 Galerie</button>
       </div>
@@ -339,7 +339,7 @@ footer span{color:var(--red)}
     <div class="pb" id="pb-2"></div>
   </div>
   <div class="container">
-    <div class="sec-head"><div class="sec-title">Nos Produits</div><button class="see-all" onclick="goPage('commander')">Voir tout le catalogue →</button></div>
+    <div class="sec-head"><div class="sec-title">Nos Produits</div><button class="see-all" onclick="goPage(\'commander\')">"Voir tout le catalogue →</button></div>
     <div class="prod-grid" id="home-grid"></div>
   </div>
 </div>
@@ -642,11 +642,38 @@ function renderPromos(){if(!DB.promos)return;DB.promos.forEach((p,i)=>{const el=
 function goPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));const pg=document.getElementById('page-'+id);if(!pg)return;pg.classList.add('active');const t=document.querySelector('.ctab[data-page="'+id+'"]');if(t)t.classList.add('active');window.scrollTo(0,0);if(id==='commander')renderCommander();else if(id==='team')renderTeam();else if(id==='partners')renderPart();else if(id==='galerie')renderGal();else if(id==='reviews')renderRevs();else if(id==='home')renderHomeGrid();else if(id==='admin'){if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;}renderAdmin();}else if(id==='settings'){if(!CU||CU.rank!=='admin'){ntf('Accès admin requis',true);goPage('home');return;}renderSettings();}}
 
 // ── HOME GRID ──
-function renderHomeGrid(){const g=document.getElementById('home-grid');if(!g)return;const p=DB.products.slice(0,12);if(!p.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">Aucun produit — L'admin peut en ajouter depuis Admin → Produits.</div>';return;}g.innerHTML=p.map(x=>pcHTML(x,x.price,false)).join('');}
-function pcHTML(p,dp,isC){const bc={RARE:'pbp',NEW:'pbg','🔥':'pbr','💎':'pbp',TOP:'pbr'}[p.badge]||'pby';return '<div class="pcard">'+(p.badge?'<div class="pcard-badge '+bc+'">'+p.badge+'</div>':'')+'<div class="pcard-img-wrap">'+(p.img?'<img class="pcard-img" src="'+p.img+'" alt="'+esc(p.name)+'" onerror="this.style.display='none'">':'')+'<div class="pcard-icon" style="'+(p.img?'display:none':'')+'">'+( p.icon||'📦')+'</div></div><div class="pcard-body"><div class="pcard-cat">'+(p.cat||'')+'</div><div class="pcard-name">'+p.name+'</div><div class="pcard-desc">'+(p.desc||'')+'</div><div class="pcard-foot"><div>'+(isC?'<div class="pcard-old">$'+p.price+'</div>':'')+'<div class="pcard-price'+(isC?' custom':'')+'">$'+dp+'</div></div><button class="pcard-add" onclick="addCart('+p.id+','+dp+',''+esc(p.name)+'',''+( p.icon||'📦')+'')">+</button></div></div></div>';}
-
+function renderHomeGrid(){
+  const g=document.getElementById('home-grid');if(!g)return;
+  const p=DB.products.slice(0,12);
+  if(!p.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">Aucun produit — Admin peut en ajouter depuis Admin → Produits.</div>';return;}
+  g.innerHTML=p.map(x=>pcHTML(x,x.price,false)).join('');
+}
+function pcHTML(p,dp,isC){
+  const bc={RARE:'pbp',NEW:'pbg','🔥':'pbr','💎':'pbp',TOP:'pbr'}[p.badge]||'pby';
+  const imgH=p.img?'<img class="pcard-img" src="'+p.img+'" alt="" onerror="this.style.display=\'none\'">':'';
+  const iconH='<div class="pcard-icon" style="'+(p.img?'display:none':'')+'">'+(p.icon||'📦')+'</div>';
+  const badgeH=p.badge?'<div class="pcard-badge '+bc+'">'+p.badge+'</div>':'';
+  const oldH=isC?'<div class="pcard-old">$'+p.price+'</div>':'';
+  const addFn="addCart("+p.id+","+dp+",'"+esc(p.name)+"','"+(p.icon||'📦')+"')";
+  return '<div class="pcard">'+badgeH+'<div class="pcard-img-wrap">'+imgH+iconH+'</div>'+
+    '<div class="pcard-body"><div class="pcard-cat">'+(p.cat||'')+'</div>'+
+    '<div class="pcard-name">'+p.name+'</div>'+
+    '<div class="pcard-desc">'+(p.desc||'')+'</div>'+
+    '<div class="pcard-foot"><div>'+oldH+'<div class="pcard-price'+(isC?' custom':'')+'">$'+dp+'</div></div>'+
+    '<button class="pcard-add" onclick="'+addFn+'">+</button></div></div></div>';
+}
 // ── SEARCH ──
-function doSearch(q){const sr=document.getElementById('hsr');if(!q.trim()){sr.classList.remove('show');return;}const res=DB.products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())).slice(0,8);sr.innerHTML=res.length?res.map(p=>'<div class="sr-item" onclick="goPage('commander')"><div class="sr-ico">'+(p.img?'<img src="'+p.img+'" alt="">':p.icon||'📦')+'</div><div><div class="sr-name">'+p.name+'</div><div class="sr-cat">'+(p.cat||'')+'</div></div><div class="sr-price">$'+p.price+'</div></div>').join(''):'<div class="empty" style="padding:14px">Aucun résultat</div>';sr.classList.add('show');}
+function doSearch(q){
+  const sr=document.getElementById('hsr');
+  if(!q.trim()){sr.classList.remove('show');return;}
+  const res=DB.products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(!res.length){sr.innerHTML='<div class="empty" style="padding:14px">Aucun résultat</div>';sr.classList.add('show');return;}
+  sr.innerHTML=res.map(p=>{
+    const ico=p.img?'<img src="'+p.img+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:4px">':p.icon||'📦';
+    return '<div class="sr-item" onclick="goPage(\'commander\')">'+'<div class="sr-ico">'+ico+'</div>'+'<div><div class="sr-name">'+p.name+'</div><div class="sr-cat">'+(p.cat||'')+'</div></div>'+'<div class="sr-price">$'+p.price+'</div></div>';
+  }).join('');
+  sr.classList.add('show');
+}
 function showSR(){if(document.getElementById('gs').value)document.getElementById('hsr').classList.add('show');}
 function hideSR(){document.getElementById('hsr').classList.remove('show');}
 

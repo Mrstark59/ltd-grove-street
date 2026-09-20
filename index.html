@@ -649,18 +649,23 @@ function renderHomeGrid(){
   g.innerHTML=p.map(x=>pcHTML(x,x.price,false)).join('');
 }
 function pcHTML(p,dp,isC){
-  const bc={RARE:'pbp',NEW:'pbg','🔥':'pbr','💎':'pbp',TOP:'pbr'}[p.badge]||'pby';
-  const imgH=p.img?'<img class="pcard-img" src="'+p.img+'" alt="" onerror="this.style.display='none'">':'';
-  const iconH='<div class="pcard-icon" style="'+(p.img?'display:none':'')+'">'+(p.icon||'📦')+'</div>';
-  const badgeH=p.badge?'<div class="pcard-badge '+bc+'">'+p.badge+'</div>':'';
-  const oldH=isC?'<div class="pcard-old">$'+p.price+'</div>':'';
-  const addFn="addCart("+p.id+","+dp+",'"+esc(p.name)+"','"+(p.icon||'📦')+"')";
-  return '<div class="pcard">'+badgeH+'<div class="pcard-img-wrap">'+imgH+iconH+'</div>'+
-    '<div class="pcard-body"><div class="pcard-cat">'+(p.cat||'')+'</div>'+
-    '<div class="pcard-name">'+p.name+'</div>'+
-    '<div class="pcard-desc">'+(p.desc||'')+'</div>'+
-    '<div class="pcard-foot"><div>'+oldH+'<div class="pcard-price'+(isC?' custom':'')+'">$'+dp+'</div></div>'+
-    '<button class="pcard-add" onclick="'+addFn+'">+</button></div></div></div>';
+  const bc={RARE:"pbp",NEW:"pbg"}[p.badge]||(p.badge==="🔥"||p.badge==="TOP"?"pbr":p.badge==="💎"?"pbp":"pby");
+  let html='<div class="pcard">';
+  if(p.badge)html+='<div class="pcard-badge '+bc+'">'+p.badge+"</div>";
+  html+='<div class="pcard-img-wrap">';
+  if(p.img)html+='<img class="pcard-img" src="'+p.img+'" alt="" onerror="this.style.display=String.fromCharCode(110,111,110,101)">';
+  html+='<div class="pcard-icon" style="'+(p.img?"display:none":"")+"">"+(p.icon||"📦")+"</div>";
+  html+="</div>";
+  html+='<div class="pcard-body">';
+  html+='<div class="pcard-cat">'+(p.cat||"")+"</div>";
+  html+='<div class="pcard-name">'+p.name+"</div>";
+  html+='<div class="pcard-desc">'+(p.desc||"")+"</div>";
+  html+='<div class="pcard-foot"><div>';
+  if(isC)html+='<div class="pcard-old">$'+p.price+"</div>";
+  html+='<div class="pcard-price'+(isC?" custom":"")+'">$'+dp+"</div></div>";
+  html+='<button class="pcard-add" onclick="addCart('+p.id+","+dp+",'"+esc(p.name)+"','"+(p.icon||"📦")+"')">+</button>";
+  html+="</div></div></div>";
+  return html;
 }
 // ── SEARCH ──
 function doSearch(q){
